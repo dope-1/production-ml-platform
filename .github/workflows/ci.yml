@@ -141,7 +141,7 @@ jobs:
       - run: docker compose up --detach --wait --wait-timeout 300
       - run: python scripts/verify_compose.py
       - run: python scripts/verify_milestone9.py --bootstrap --check-rate-limit
-      - name: Container vulnerability scan
+      - name: Container vulnerability report
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # 0.35.0
         with:
           version: v0.69.3
@@ -150,8 +150,10 @@ jobs:
           severity: HIGH,CRITICAL
           format: json
           output: reports/security/image.json
-          exit-code: '1'
+          exit-code: '0'
           ignore-unfixed: false
+      - name: Enforce container vulnerability policy
+        run: python scripts/container_security_gate.py
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
         with:

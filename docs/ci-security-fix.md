@@ -94,8 +94,15 @@ The supplied image report includes Debian findings with no fixed stable package 
 For example, Debian currently lists CVE-2026-78408 as vulnerable in both bookworm and
 trixie. Switching to bookworm alone would not fix it. Pulling the base and applying apt
 upgrades addresses available fixes; it cannot guarantee removal of upstream-unfixed
-findings. The existing HIGH/CRITICAL gate, including unfixed findings, remains enabled.
-No vulnerability exclusions, ignore-unfixed setting, or continue-on-error was added.
+findings. The initial dependency patch retained the full HIGH/CRITICAL gate.
+
+Follow-up approved on 18 September: eight specific Debian advisories (44 package
+findings) may pass local development CI through 2 October 2026 UTC. The exact
+scope is in `configs/container-exceptions.json`; see `SECURITY.md`. This accepts
+residual risk rather than fixing the vulnerabilities and is not production clearance.
+The complete Trivy report is retained and an immediate policy step rejects
+unapproved, changed, fixable, CRITICAL or expired findings. Dependency and secret
+scans are unchanged. A successful gate may therefore report accepted exceptions.
 
 If Compose alone fails at Container vulnerability scan, download the NEW run's
 container-security-evidence artifact. That identifies what remains after this rebuild;

@@ -79,7 +79,16 @@ CI runs Ruff's full `S` rule set over application source, `pip-audit --strict` o
 pinned development/runtime dependencies on Linux and Windows, a Trivy secret scan
 of the clean checkout, and a Trivy HIGH/CRITICAL scan of the built API image,
 including unfixed findings. Audit failures/unavailable advisory services fail the
-job; there are no vulnerability ignore lists or `continue-on-error` bypasses.
+job. There are no `continue-on-error` bypasses. The raw image report is preserved;
+`scripts/container_security_gate.py` enforces the result immediately after scanning.
+
+The owner approved eight specific Debian advisories for local development CI on
+18 September 2026, expiring at the end of 2 October 2026 UTC. The exact advisory,
+package, installed version and Debian release are in
+`configs/container-exceptions.json`. This accepts residual risk; it does not fix
+those vulnerabilities or authorize production deployment. All CRITICAL findings,
+Python findings, new/changed HIGH findings, available fixed versions and expired
+exceptions fail the gate. Scanner failures or missing/invalid reports also fail.
 Two line-specific S603 annotations cover a resolved Git executable with constant
 arguments and no shell/input interpolation; they are not vulnerability exceptions.
 
@@ -90,6 +99,6 @@ only an isolated CI registry and has no production deployment permissions.
 Weekly CI and Dependabot help surface newly disclosed findings; dependency upgrades
 still require review, regenerated locks and model compatibility validation.
 
-Passing scans means no findings under those checks at that time, not proof that
-all code or model artifacts are safe. Do not call a release security-verified until
+Passing CI can include the explicitly accepted findings above. It is not proof
+that all code or model artifacts are safe. Do not call a release security-verified until
 the actual GitHub scan jobs pass. See [Milestone 9 guide](docs/milestone-9-guide.md).
