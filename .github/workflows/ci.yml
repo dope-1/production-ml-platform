@@ -124,7 +124,7 @@ jobs:
       - run: mkdir -p reports/security
       # Scan the clean checkout before generating disposable credentials.
       - name: Secret scan
-        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # 0.35.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # 0.36.0
         with:
           version: v0.69.3
           scan-type: fs
@@ -142,7 +142,7 @@ jobs:
       - run: python scripts/verify_compose.py
       - run: python scripts/verify_milestone9.py --bootstrap --check-rate-limit
       - name: Container vulnerability report
-        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # 0.35.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # 0.36.0
         with:
           version: v0.69.3
           image-ref: ml-platform-ci-ml-api:latest
