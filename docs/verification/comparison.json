@@ -1,0 +1,153 @@
+{
+  "selected_run_id": "5e69a1c31e0042a39d2304b16183661e",
+  "trials": [
+    {
+      "algorithm": "logistic",
+      "cv_pr_auc_mean": 0.4956727829486009,
+      "cv_pr_auc_std": 0.01576643162411057,
+      "parameters": {
+        "C": 0.1,
+        "max_iter": 1500,
+        "random_state": 42
+      },
+      "run_id": "6b6cd5ce26fe4dc7a9a8aba9979bca42",
+      "threshold": 0.2,
+      "training_seconds": 0.107005676999961,
+      "validation": {
+        "accuracy": 0.6441245396719116,
+        "brier": 0.14607333483708715,
+        "f1": 0.4590330788804071,
+        "pr_auc": 0.5094998340915124,
+        "precision": 0.3478596220593907,
+        "recall": 0.674644727000748,
+        "roc_auc": 0.7237376705111193
+      }
+    },
+    {
+      "algorithm": "logistic",
+      "cv_pr_auc_mean": 0.4955417427306994,
+      "cv_pr_auc_std": 0.015526570614092076,
+      "parameters": {
+        "C": 1.0,
+        "max_iter": 1500,
+        "random_state": 42
+      },
+      "run_id": "838dd28423e941fdad9a3b08f2d9dc1f",
+      "threshold": 0.2,
+      "training_seconds": 0.14852820400028577,
+      "validation": {
+        "accuracy": 0.6442919317040509,
+        "brier": 0.14605609946041773,
+        "f1": 0.45942508267616383,
+        "pr_auc": 0.5095440122794784,
+        "precision": 0.3481110254433308,
+        "recall": 0.675392670157068,
+        "roc_auc": 0.7237334767388388
+      }
+    },
+    {
+      "algorithm": "random_forest",
+      "cv_pr_auc_mean": 0.5412377306568907,
+      "cv_pr_auc_std": 0.006445882848085355,
+      "parameters": {
+        "max_depth": 6,
+        "min_samples_leaf": 15,
+        "n_estimators": 80,
+        "n_jobs": 2,
+        "random_state": 42
+      },
+      "run_id": "5e69a1c31e0042a39d2304b16183661e",
+      "threshold": 0.2,
+      "training_seconds": 3.318423977999828,
+      "validation": {
+        "accuracy": 0.7457315031804486,
+        "brier": 0.13637600903880348,
+        "f1": 0.5344774747165185,
+        "pr_auc": 0.5637867790771146,
+        "precision": 0.45275181723779856,
+        "recall": 0.6522064323111444,
+        "roc_auc": 0.7855152428298995
+      }
+    },
+    {
+      "algorithm": "random_forest",
+      "cv_pr_auc_mean": 0.5411441048988516,
+      "cv_pr_auc_std": 0.007653560919488354,
+      "parameters": {
+        "max_depth": 12,
+        "min_samples_leaf": 15,
+        "n_estimators": 80,
+        "n_jobs": 2,
+        "random_state": 42
+      },
+      "run_id": "551130f3d56543269a4896536ef4161f",
+      "threshold": 0.21,
+      "training_seconds": 5.173430475000259,
+      "validation": {
+        "accuracy": 0.7442249748911952,
+        "brier": 0.1349579376828092,
+        "f1": 0.5405892964521948,
+        "pr_auc": 0.5632008678156033,
+        "precision": 0.4519859225741579,
+        "recall": 0.6724008975317876,
+        "roc_auc": 0.7886770245314709
+      }
+    },
+    {
+      "algorithm": "lightgbm",
+      "cv_pr_auc_mean": 0.541010152071654,
+      "cv_pr_auc_std": 0.003440714290254062,
+      "parameters": {
+        "deterministic": true,
+        "force_col_wise": true,
+        "learning_rate": 0.05,
+        "min_child_samples": 30,
+        "n_estimators": 120,
+        "n_jobs": 2,
+        "num_leaves": 15,
+        "random_state": 42,
+        "verbosity": -1
+      },
+      "run_id": "f06a4c539a7f457795c83c81474e1967",
+      "threshold": 0.22,
+      "training_seconds": 0.7491507390000152,
+      "validation": {
+        "accuracy": 0.7564445932373619,
+        "brier": 0.13444222135874268,
+        "f1": 0.544885830466062,
+        "pr_auc": 0.5691405073758562,
+        "precision": 0.4682795698924731,
+        "recall": 0.6514584891548242,
+        "roc_auc": 0.7893540768063586
+      }
+    },
+    {
+      "algorithm": "lightgbm",
+      "cv_pr_auc_mean": 0.5340905706139849,
+      "cv_pr_auc_std": 0.004169238091045618,
+      "parameters": {
+        "deterministic": true,
+        "force_col_wise": true,
+        "learning_rate": 0.05,
+        "min_child_samples": 30,
+        "n_estimators": 120,
+        "n_jobs": 2,
+        "num_leaves": 31,
+        "random_state": 42,
+        "verbosity": -1
+      },
+      "run_id": "fe1e9a415d2d46f183443091281efe56",
+      "threshold": 0.21,
+      "training_seconds": 0.9283842629997707,
+      "validation": {
+        "accuracy": 0.7445597589554738,
+        "brier": 0.13516520052978123,
+        "f1": 0.5372953305033353,
+        "pr_auc": 0.5630513899737067,
+        "precision": 0.45181030086690466,
+        "recall": 0.6626776364996261,
+        "roc_auc": 0.78580195168484
+      }
+    }
+  ]
+}

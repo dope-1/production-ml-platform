@@ -1,0 +1,114 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-9.1.1, pluggy-1.6.0
+rootdir: /workspace/scratch/99eb9d6a3896/production-ml-platform
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.15.1, cov-7.1.0
+collected 45 items
+
+tests/e2e/test_training_registry.py ...                                  [  6%]
+tests/integration/test_postgres.py s                                     [  8%]
+tests/unit/test_api.py ........                                          [ 26%]
+tests/unit/test_config.py ........                                       [ 44%]
+tests/unit/test_data_pipeline.py .............                           [ 73%]
+tests/unit/test_model_gate.py ............                               [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv/lib/python3.12/site-packages/starlette/testclient.py:53
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.venv/lib/python3.12/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+.venv/lib/python3.12/site-packages/mlflow/utils/pydantic_utils.py:33
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.venv/lib/python3.12/site-packages/mlflow/utils/pydantic_utils.py:33: PydanticDeprecatedSince212: Using `@model_validator` with mode='after' on a classmethod is deprecated. Instead, use an instance method. See the documentation at https://docs.pydantic.dev/2.13/concepts/validators/#model-after-validator. Deprecated in Pydantic V2.12 to be removed in V3.0.
+    return pydantic_model_validator(mode=mode)(func)
+
+.venv/lib/python3.12/site-packages/mlflow/gateway/config.py:454
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.venv/lib/python3.12/site-packages/mlflow/gateway/config.py:454: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class Route(ConfigModel):
+
+.venv/lib/python3.12/site-packages/shap/plots/colors/_colors.py:47
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.venv/lib/python3.12/site-packages/shap/plots/colors/_colors.py:47: PendingDeprecationWarning: The set_bad function will be deprecated in a future version. Use cmap.with_extremes(bad=...) or Colormap(bad=...) instead.
+    red_blue.set_bad(gray_rgb.tolist(), 1.0)
+
+.venv/lib/python3.12/site-packages/shap/plots/colors/_colors.py:48
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.venv/lib/python3.12/site-packages/shap/plots/colors/_colors.py:48: PendingDeprecationWarning: The set_over function will be deprecated in a future version. Use cmap.with_extremes(over=...) or Colormap(over=...) instead.
+    red_blue.set_over(gray_rgb.tolist(), 1.0)
+
+.venv/lib/python3.12/site-packages/shap/plots/colors/_colors.py:49
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.venv/lib/python3.12/site-packages/shap/plots/colors/_colors.py:49: PendingDeprecationWarning: The set_under function will be deprecated in a future version. Use cmap.with_extremes(under=...) or Colormap(under=...) instead.
+    red_blue.set_under(gray_rgb.tolist(), 1.0)  # "under" is incorrectly used instead of "bad" in the scatter plot
+
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.venv/lib/python3.12/site-packages/mlflow/models/model.py:365: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    self.utc_time_created = str(utc_time_created or datetime.utcnow())
+
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.venv/lib/python3.12/site-packages/mlflow/types/chat.py:162: PydanticDeprecatedSince20: `min_items` is deprecated and will be removed, use `min_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    stop: Optional[list[str]] = Field(None, min_items=1)
+
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.venv/lib/python3.12/site-packages/mlflow/types/chat.py:216: PydanticDeprecatedSince20: `min_items` is deprecated and will be removed, use `min_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    messages: list[ChatMessage] = Field(..., min_items=1)
+
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.venv/lib/python3.12/site-packages/mlflow/types/chat.py:217: PydanticDeprecatedSince20: `min_items` is deprecated and will be removed, use `min_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    tools: Optional[list[ChatTool]] = Field(None, min_items=1)
+
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.venv/lib/python3.12/site-packages/shap/explainers/_tree.py:586: UserWarning: LightGBM binary classifier with TreeExplainer shap values output has changed to a list of ndarray
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.14-final-0 _______________
+
+Name                                         Stmts   Miss  Cover   Missing
+--------------------------------------------------------------------------
+src/ml_platform/__init__.py                      1      0   100%
+src/ml_platform/api/__init__.py                  0      0   100%
+src/ml_platform/api/main.py                     66      1    98%   113
+src/ml_platform/cli.py                          58     58     0%   3-81
+src/ml_platform/core/__init__.py                 0      0   100%
+src/ml_platform/core/config.py                  29      0   100%
+src/ml_platform/core/io.py                      23      1    96%   32
+src/ml_platform/core/training_config.py         30      1    97%   38
+src/ml_platform/data/__init__.py                 0      0   100%
+src/ml_platform/data/ingestion.py               40     24    40%   17-32, 39-48
+src/ml_platform/data/splitting.py               58      6    90%   35, 38, 88-90, 97, 108
+src/ml_platform/data/validation.py              43      2    95%   24, 51
+src/ml_platform/db/__init__.py                   0      0   100%
+src/ml_platform/db/models.py                     2      2     0%   1-4
+src/ml_platform/db/session.py                    7      1    86%   23
+src/ml_platform/features/__init__.py             0      0   100%
+src/ml_platform/features/pipeline.py            28      2    93%   26, 37
+src/ml_platform/inference/__init__.py            0      0   100%
+src/ml_platform/models/__init__.py               0      0   100%
+src/ml_platform/models/gate.py                  50      5    90%   23, 38, 40, 56, 58
+src/ml_platform/models/registry.py             175     24    86%   42, 67, 75, 80, 86, 91, 97, 100, 103, 117, 125, 130, 168, 182, 190-191, 194, 202, 210-213, 224, 227, 238
+src/ml_platform/monitoring/__init__.py           0      0   100%
+src/ml_platform/observability/__init__.py        0      0   100%
+src/ml_platform/observability/logging.py        18      0   100%
+src/ml_platform/observability/telemetry.py       6      0   100%
+src/ml_platform/retraining/__init__.py           0      0   100%
+src/ml_platform/training/__init__.py             0      0   100%
+src/ml_platform/training/evaluate.py            79      0   100%
+src/ml_platform/training/explain.py             28      1    96%   26
+src/ml_platform/training/train.py              106      2    98%   46, 239
+src/ml_platform/training/tuning.py              17      0   100%
+--------------------------------------------------------------------------
+TOTAL                                          864    130    85%
+================= 44 passed, 1 skipped, 22 warnings in 26.52s ==================

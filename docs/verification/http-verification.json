@@ -1,0 +1,25 @@
+{
+  "artifact_proxy": "verified by HTTP upload/download",
+  "artifact_reload": true,
+  "decision": {
+    "decision": "PROMOTE",
+    "reasons": [
+      "All validation gates passed"
+    ],
+    "version": "1"
+  },
+  "mlflow_health": 200,
+  "mlflow_ui_http": 200,
+  "parent_run_id": "cdd670e389874ae2a1baf95010945c7f",
+  "production_version": "1",
+  "report_run_id": "5e69a1c31e0042a39d2304b16183661e",
+  "test": {
+    "accuracy": 0.7433163851074299,
+    "brier": 0.13774885672502774,
+    "f1": 0.5449258505379471,
+    "pr_auc": 0.5801058784770065,
+    "precision": 0.4611220472440945,
+    "recall": 0.665955934612651,
+    "roc_auc": 0.7847234282440978
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "limit_bal": 120000,
+  "pay_0": -1,
+  "pay_2": 2,
+  "pay_3": 0,
+  "pay_4": 0,
+  "pay_5": 0,
+  "pay_6": 2,
+  "bill_amt1": 2682,
+  "bill_amt2": 1725,
+  "bill_amt3": 2682,
+  "bill_amt4": 3272,
+  "bill_amt5": 3455,
+  "bill_amt6": 3261,
+  "pay_amt1": 0,
+  "pay_amt2": 1000,
+  "pay_amt3": 1000,
+  "pay_amt4": 1000,
+  "pay_amt5": 0,
+  "pay_amt6": 2000
+}

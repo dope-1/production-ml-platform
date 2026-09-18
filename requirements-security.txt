@@ -1,0 +1,4 @@
+# Scanner tools only. Install in a separate venv; do not replace requirements-dev.lock.
+# Exact tool versions; their transitive dependencies are resolved by pip.
+pip-audit==2.10.1
+ruff==0.16.8

@@ -1,0 +1,110 @@
+......s................................................................. [ 98%]
+.                                                                        [100%]
+=============================== warnings summary ===============================
+.fix-venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.fix-venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.fix-venv/lib/python3.12/site-packages/starlette/testclient.py:53
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.fix-venv/lib/python3.12/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+.fix-venv/lib/python3.12/site-packages/mlflow/utils/pydantic_utils.py:33
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.fix-venv/lib/python3.12/site-packages/mlflow/utils/pydantic_utils.py:33: PydanticDeprecatedSince212: Using `@model_validator` with mode='after' on a classmethod is deprecated. Instead, use an instance method. See the documentation at https://docs.pydantic.dev/2.13/concepts/validators/#model-after-validator. Deprecated in Pydantic V2.12 to be removed in V3.0.
+    return pydantic_model_validator(mode=mode)(func)
+
+.fix-venv/lib/python3.12/site-packages/mlflow/gateway/config.py:454
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.fix-venv/lib/python3.12/site-packages/mlflow/gateway/config.py:454: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class Route(ConfigModel):
+
+.fix-venv/lib/python3.12/site-packages/shap/plots/colors/_colors.py:47
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.fix-venv/lib/python3.12/site-packages/shap/plots/colors/_colors.py:47: PendingDeprecationWarning: The set_bad function will be deprecated in a future version. Use cmap.with_extremes(bad=...) or Colormap(bad=...) instead.
+    red_blue.set_bad(gray_rgb.tolist(), 1.0)
+
+.fix-venv/lib/python3.12/site-packages/shap/plots/colors/_colors.py:48
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.fix-venv/lib/python3.12/site-packages/shap/plots/colors/_colors.py:48: PendingDeprecationWarning: The set_over function will be deprecated in a future version. Use cmap.with_extremes(over=...) or Colormap(over=...) instead.
+    red_blue.set_over(gray_rgb.tolist(), 1.0)
+
+.fix-venv/lib/python3.12/site-packages/shap/plots/colors/_colors.py:49
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.fix-venv/lib/python3.12/site-packages/shap/plots/colors/_colors.py:49: PendingDeprecationWarning: The set_under function will be deprecated in a future version. Use cmap.with_extremes(under=...) or Colormap(under=...) instead.
+    red_blue.set_under(gray_rgb.tolist(), 1.0)  # "under" is incorrectly used instead of "bad" in the scatter plot
+
+tests/e2e/test_training_registry.py: 12 warnings
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.fix-venv/lib/python3.12/site-packages/mlflow/models/model.py:365: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    self.utc_time_created = str(utc_time_created or datetime.utcnow())
+
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.fix-venv/lib/python3.12/site-packages/mlflow/types/chat.py:162: PydanticDeprecatedSince20: `min_items` is deprecated and will be removed, use `min_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    stop: Optional[list[str]] = Field(None, min_items=1)
+
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.fix-venv/lib/python3.12/site-packages/mlflow/types/chat.py:216: PydanticDeprecatedSince20: `min_items` is deprecated and will be removed, use `min_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    messages: list[ChatMessage] = Field(..., min_items=1)
+
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.fix-venv/lib/python3.12/site-packages/mlflow/types/chat.py:217: PydanticDeprecatedSince20: `min_items` is deprecated and will be removed, use `min_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    tools: Optional[list[ChatTool]] = Field(None, min_items=1)
+
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+tests/e2e/test_training_registry.py::test_real_train_register_promote_load_reject_and_rollback
+tests/e2e/test_training_registry.py::test_real_retraining_retains_champion_without_improvement
+tests/e2e/test_training_registry.py::test_real_retraining_retains_champion_without_improvement
+tests/unit/test_inference_monitoring.py::test_lightgbm_explanation_reconstructs_probability
+  /workspace/scratch/99eb9d6a3896/production-ml-platform/.fix-venv/lib/python3.12/site-packages/shap/explainers/_tree.py:586: UserWarning: LightGBM binary classifier with TreeExplainer shap values output has changed to a list of ndarray
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.14-final-0 _______________
+
+Name                                         Stmts   Miss  Cover   Missing
+--------------------------------------------------------------------------
+src/ml_platform/__init__.py                      1      0   100%
+src/ml_platform/api/__init__.py                  0      0   100%
+src/ml_platform/api/dashboard.py                 1      0   100%
+src/ml_platform/api/main.py                    114     11    90%   50-57, 141-142, 182, 184-185
+src/ml_platform/api/routes.py                  113     37    67%   36, 39-40, 49, 78-79, 122-129, 134-141, 148, 166, 171-174, 184-186, 191-203, 208
+src/ml_platform/cli.py                          58     58     0%   3-81
+src/ml_platform/core/__init__.py                 0      0   100%
+src/ml_platform/core/config.py                  35      0   100%
+src/ml_platform/core/io.py                      23      1    96%   32
+src/ml_platform/core/training_config.py         30      1    97%   38
+src/ml_platform/data/__init__.py                 0      0   100%
+src/ml_platform/data/ingestion.py               40     24    40%   17-32, 39-48
+src/ml_platform/data/splitting.py               63      7    89%   35, 38, 88-90, 97, 109, 113
+src/ml_platform/data/validation.py              43      2    95%   24, 51
+src/ml_platform/db/__init__.py                   0      0   100%
+src/ml_platform/db/models.py                    37      0   100%
+src/ml_platform/db/session.py                    7      0   100%
+src/ml_platform/features/__init__.py             0      0   100%
+src/ml_platform/features/pipeline.py            28      2    93%   26, 37
+src/ml_platform/inference/__init__.py            0      0   100%
+src/ml_platform/inference/batch.py              45      4    91%   30, 34, 51, 70
+src/ml_platform/inference/schema.py             47      3    94%   46, 48, 51
+src/ml_platform/inference/service.py            64      4    94%   29, 56, 81, 91
+src/ml_platform/inference/storage.py            55      6    89%   40, 78, 80, 93, 96, 98
+src/ml_platform/models/__init__.py               0      0   100%
+src/ml_platform/models/gate.py                  50      5    90%   23, 38, 40, 56, 58
+src/ml_platform/models/registry.py             195     25    87%   41, 52, 60, 65, 71, 76, 82, 85, 88, 104, 113, 124, 147, 169, 177, 182, 229, 243, 251-252, 255, 263, 271-274
+src/ml_platform/monitoring/__init__.py           0      0   100%
+src/ml_platform/monitoring/reference.py         60      6    90%   71, 86, 97, 112, 120, 127
+src/ml_platform/monitoring/report.py            80      4    95%   155, 159, 222-223
+src/ml_platform/monitoring/simulation.py        35     12    66%   19, 42-58
+src/ml_platform/observability/__init__.py        0      0   100%
+src/ml_platform/observability/logging.py        18      0   100%
+src/ml_platform/observability/telemetry.py      12      2    83%   37-38
+src/ml_platform/ops.py                          91     91     0%   3-110
+src/ml_platform/retraining/__init__.py           0      0   100%
+src/ml_platform/retraining/workflow.py         112     17    85%   34, 36, 110, 130, 141, 156-160, 162-169, 181, 207-209
+src/ml_platform/training/__init__.py             0      0   100%
+src/ml_platform/training/evaluate.py            79      0   100%
+src/ml_platform/training/explain.py             28      1    96%   26
+src/ml_platform/training/train.py              109      2    98%   46, 249
+src/ml_platform/training/tuning.py              17      0   100%
+--------------------------------------------------------------------------
+TOTAL                                         1690    325    81%
+72 passed, 1 skipped, 31 warnings in 45.55s

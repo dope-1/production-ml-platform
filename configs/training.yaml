@@ -1,0 +1,21 @@
+seed: 42
+cv_folds: 3
+threshold_minimum_recall: 0.65
+threshold_grid_size: 99
+shap_samples: 80
+latency_repeats: 30
+selection_ap_tolerance: 0.005
+experiment: credit-default-v1
+model_name: credit-default
+gate:
+  minimum_roc_auc: 0.65
+  minimum_pr_auc: 0.30
+  minimum_recall: 0.60
+  maximum_brier: 0.23
+  max_latency_ms: 100
+  max_model_bytes: 50000000
+  regression_tolerance: 0.01
+  minimum_improvement: 0.001
+  max_cv_std: 0.10
+  max_sex_recall_gap: 0.20
+  min_group_positives: 20

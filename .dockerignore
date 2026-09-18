@@ -1,0 +1,25 @@
+.git
+.env
+.venv
+__pycache__
+*.egg-info
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+reports
+upload
+
+.state
+mlruns
+data
+
+.fix-venv
+
+# Security tooling and local secret material
+.security-venv/
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key

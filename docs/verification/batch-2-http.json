@@ -1,0 +1,84 @@
+{
+  "benchmark": {
+    "client_environment": {
+      "logical_cpus": 9,
+      "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+      "processor": "x86_64",
+      "python": "3.12.14"
+    },
+    "concurrency": 4,
+    "duration_seconds": 4.07749738900003,
+    "error_rate": 0.0,
+    "errors": 0,
+    "latency_ms": {
+      "p50": 81.2871615000006,
+      "p95": 98.53344730001932,
+      "p99": 108.02124755996823
+    },
+    "model_versions": [
+      "1"
+    ],
+    "note": "Measured on this machine; no cloud SLA claim. Warmup excluded from timings.",
+    "requests": 200,
+    "scope": "Real loopback HTTP, Uvicorn 1 worker, SQLite observations, MLflow HTTP artifact proxy. Docker/PostgreSQL not tested here.",
+    "successes": 200,
+    "throughput_rps": 49.04969419221339,
+    "warmup_requests": 10
+  },
+  "cold_process_download_verified": true,
+  "dataset_version": "f6d615e9f3f5dfb6a906",
+  "delayed_labels": 120,
+  "host_uri": "http://127.0.0.1:5031",
+  "model_version": "1",
+  "observation_store": "SQLite reference fixture; Windows verifier requires PostgreSQL",
+  "prediction_parity_rows": 120,
+  "reference_data": "Real UCI model; historical validation examples, not current production outcomes.",
+  "serving_uri": "http://localhost:5031",
+  "simulation": {
+    "mild": {
+      "prediction_drift": {
+        "drift": false,
+        "mean_risk": 0.22267862286891757,
+        "mean_risk_delta": 0.005568402881917567,
+        "positive_rate": 0.335,
+        "positive_rate_delta": 0.028011322438507458,
+        "psi": 0.017182305698148596
+      },
+      "status": "stable"
+    },
+    "moderate": {
+      "prediction_drift": {
+        "drift": true,
+        "mean_risk": 0.37449309117660845,
+        "mean_risk_delta": 0.15738287118960845,
+        "positive_rate": 0.6166666666666667,
+        "positive_rate_delta": 0.30967798910517413,
+        "psi": 0.6671829756179914
+      },
+      "status": "drift"
+    },
+    "none": {
+      "prediction_drift": {
+        "drift": false,
+        "mean_risk": 0.21529569672423032,
+        "mean_risk_delta": -0.0018145232627696795,
+        "positive_rate": 0.29,
+        "positive_rate_delta": -0.016988677561492582,
+        "psi": 0.014672122700203842
+      },
+      "status": "stable"
+    },
+    "severe": {
+      "prediction_drift": {
+        "drift": true,
+        "mean_risk": 0.5978937109745033,
+        "mean_risk_delta": 0.3807834909875033,
+        "positive_rate": 0.9666666666666667,
+        "positive_rate_delta": 0.6596779891051741,
+        "psi": 4.662307387330273
+      },
+      "status": "drift"
+    }
+  },
+  "verified_at": "2026-09-17T17:47:39.432298+00:00"
+}

@@ -1,0 +1,51 @@
+{
+  "dataset_version": "f6d615e9f3f5dfb6a906",
+  "duplicate_predictor_profiles": 817,
+  "feature_version": "financial-only-v1",
+  "features": [
+    "limit_bal",
+    "pay_0",
+    "pay_2",
+    "pay_3",
+    "pay_4",
+    "pay_5",
+    "pay_6",
+    "bill_amt1",
+    "bill_amt2",
+    "bill_amt3",
+    "bill_amt4",
+    "bill_amt5",
+    "bill_amt6",
+    "pay_amt1",
+    "pay_amt2",
+    "pay_amt3",
+    "pay_amt4",
+    "pay_amt5",
+    "pay_amt6"
+  ],
+  "raw_sha256": "56c885f84457f6680f8438f02bfcdac9579323d8a94465ee5f26e32baa727602",
+  "rows": 30000,
+  "schema_hash": "21d49ebd26716819986f7a0b32b6011c4cf0b67dd34f41a8bb98c6eef55b691f",
+  "seed": 42,
+  "source_attribution": "https://archive.ics.uci.edu/dataset/350/default+of+credit+card+clients",
+  "source_file": "uci-default.zip",
+  "split_policy": "stratified-profile-groups-v1",
+  "splits": {
+    "test": {
+      "positive_rate": 0.23076923076923078,
+      "rows": 6097,
+      "sha256": "adbe4afb82c42ff93556473ac2e1387ab74a400c6d6d077ed9d0bf28aacebbb4"
+    },
+    "train": {
+      "positive_rate": 0.21707847621172402,
+      "rows": 17929,
+      "sha256": "67abe76acf2bd768f63b15bc7f3d3afeed0492d52618270d54aa76adc73aab60"
+    },
+    "validation": {
+      "positive_rate": 0.22380314697020423,
+      "rows": 5974,
+      "sha256": "9bfca4ecd9dc4a6e47ce72bc329e1444dec7702815cd7796aad34ef4f54b25cd"
+    }
+  },
+  "target_rate": 0.2212
+}
