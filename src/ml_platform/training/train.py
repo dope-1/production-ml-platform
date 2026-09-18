@@ -154,16 +154,24 @@ def train(
                 mlflow.log_dict(manifest, "dataset.json")
                 mlflow.log_dict(config.model_dump(), "configuration.json")
                 mlflow.log_dict(versions, "dependencies.json")
-                mlflow.sklearn.log_model(
-                    model,
-                    "model",
-                    signature=infer_signature(X.iloc[:5], model.predict(X.iloc[:5])),
-                    input_example=X.iloc[:2],
-                    code_paths=[str(Path(__file__).resolve().parents[1])],
-                    pip_requirements=[
-                        f"{n}=={v}" for n, v in versions.items() if n != "production-ml-platform"
-                    ],
-                )
+                # Preserve the run/model artifact contract used by the verified registry.
+                # MLflow 3 log_model stores models outside the run artifact directory.
+                with tempfile.TemporaryDirectory() as temporary:
+                    folder = Path(temporary) / "model"
+                    mlflow.sklearn.save_model(
+                        model,
+                        str(folder),
+                        serialization_format=mlflow.sklearn.SERIALIZATION_FORMAT_CLOUDPICKLE,
+                        signature=infer_signature(X.iloc[:5], model.predict(X.iloc[:5])),
+                        input_example=X.iloc[:2],
+                        code_paths=[str(Path(__file__).resolve().parents[1])],
+                        pip_requirements=[
+                            f"{n}=={v}"
+                            for n, v in versions.items()
+                            if n != "production-ml-platform"
+                        ],
+                    )
+                    mlflow.log_artifacts(str(folder), "model")
         # Selection uses train-only CV; <=0.005 AP difference prefers the earlier,
         # simpler algorithm. Test data have not been scored or used for selection.
         best_score = max(t["cv_pr_auc_mean"] for t in trials)

@@ -65,6 +65,9 @@ services:
     restart: unless-stopped
   mlflow:
     build: .
+    environment:
+      MLFLOW_SERVER_ALLOWED_HOSTS: "mlflow:5000,localhost:5000,127.0.0.1:5000"
+      MLFLOW_SERVER_CORS_ALLOWED_ORIGINS: "http://localhost:5000,http://127.0.0.1:5000"
     command: ["mlflow", "server", "--host", "0.0.0.0", "--port", "5000", "--workers", "1", "--backend-store-uri", "sqlite:////mlflow/mlflow.db", "--serve-artifacts", "--artifacts-destination", "/mlflow/artifacts"]
     ports:
       - "127.0.0.1:5000:5000"

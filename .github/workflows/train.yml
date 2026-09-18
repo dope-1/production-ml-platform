@@ -1,5 +1,7 @@
 name: Model validation
 on: workflow_dispatch
+env:
+  MLFLOW_DISABLE_TELEMETRY: "true"
 permissions:
   contents: read
 concurrency:

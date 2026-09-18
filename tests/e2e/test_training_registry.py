@@ -1,5 +1,7 @@
 import json
 from pathlib import Path
+from urllib.parse import urlparse
+from urllib.request import url2pathname
 from uuid import uuid4
 
 import mlflow
@@ -91,7 +93,11 @@ def test_real_train_register_promote_load_reject_and_rollback(registry):
 def test_integrity_checks_before_deserialization(registry):
     registry, version, policy, _ = registry
     record = registry.client.get_model_version(registry.name, version)
-    path = Path(registry.client.download_artifacts(record.run_id, "model/model.pkl"))
+    # MLflow 3 may return a downloaded copy. Tamper with the actual local
+    # artifact store so this still verifies the production integrity boundary.
+    source = urlparse(record.source)
+    assert source.scheme == "file" and not source.netloc
+    path = Path(url2pathname(source.path)) / "model.pkl"
     original = path.read_bytes()
     try:
         path.write_bytes(original + b"tampering")

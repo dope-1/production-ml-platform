@@ -70,7 +70,8 @@ class RegistryReader:
         ):
             raise ValueError("Only finished controlled training runs may be used")
         if (
-            record.source.rstrip("/")
+            not record.source
+            or record.source.rstrip("/")
             != self.client.get_run(record.run_id).info.artifact_uri.rstrip("/") + "/model"
         ):
             raise ValueError("Registry model source does not match controlled run artifact")
@@ -109,6 +110,8 @@ class RegistryReader:
     ) -> tuple[Any, dict[str, Any]]:
         self._ensure_no_pending()
         record = self.client.get_model_version(self.name, version)
+        if not record.run_id:
+            raise ValueError("Model version has no controlled run")
         if require_approved and record.tags.get("approved") != "true":
             raise ValueError("Production alias references an unapproved model")
         evidence = self.evidence(version)
