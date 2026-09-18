@@ -15,7 +15,7 @@ dependencies = [
   "shap>=0.47,<0.50", "xlrd>=2,<3", "filelock>=3.16,<4", "pyyaml>=6,<7"
 ]
 [project.optional-dependencies]
-dev = ["httpx>=0.28,<1", "pytest>=8,<10", "pytest-cov>=6,<8", "ruff>=0.9,<1", "mypy>=1.14,<3", "pandas-stubs>=2.2,<3", "types-PyYAML>=6,<7"]
+dev = ["httpx>=0.28,<1", "pytest>=8,<10", "pytest-cov>=6,<8", "ruff>=0.9,<1", "mypy>=1.14,<3", "pandas-stubs>=2.2,<4", "types-PyYAML>=6,<7"]
 [tool.setuptools.packages.find]
 where = ["src"]
 [tool.pytest.ini_options]
