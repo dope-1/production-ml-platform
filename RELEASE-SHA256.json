@@ -72,7 +72,7 @@
   "scripts/upgrade_and_verify.py": "73f536a107e198a6c9a277b9ec6568e07d709e04d51dcf00354dc9fc9fc587a8",
   "scripts/upgrade_batch2.py": "063f6f71583f79bd2264e9481c97a63158e68b3670eaf6293c2dcc9dedcf11e0",
   "scripts/upgrade_milestone9.py": "82f5c759cec8826be068dc3be9ec36d0f3652454620d7c09f52fc2cc5069375b",
-  "scripts/upgrade_security.py": "d155461926f9640d53ff0ae392621a847314ef3ca31cc48510a8ec9bf5d427a8",
+  "scripts/upgrade_security.py": "249e649d965f1f2d4d939fbccdb4dcc6cc2b9fdcea33783f7ea236ec32b43a1c",
   "scripts/verify-batch.ps1": "ea8c82da6029c6d3b3343307784ce1e1bc89315aea54e360b18b64d779a7e637",
   "scripts/verify_batch.py": "f12367dfa18e375941a41964fb5a4d0b3558b013f123516c1da7950cbbba664f",
   "scripts/verify_batch2.py": "3161795bb42fa4ccccad14679d708b44b667916307bbff1f301e87d8e539f8df",
@@ -137,5 +137,5 @@
   "tests/unit/test_model_gate.py": "315f521e29c5c41400036d01f8945151d39f0d6109db9aec54ad1b7597d899e6",
   "tests/unit/test_retraining.py": "28cfa5cfdb07718bac8329720ec5b339cda38c9a5b5c0ce1c535a408168cc399",
   "tests/unit/test_security.py": "6e02e05b14d6d86b7b6ca772419570eb84191e60b1aa6f1680ba3cd6ff7c4438",
-  "tests/unit/test_security_upgrade.py": "e898a43a2ba55106b92fdd2b35b99b723d2e43a6f2c9d7d3e29fae1e0c601463"
+  "tests/unit/test_security_upgrade.py": "37922a7054f20d87484e3e64a407b5c55d4afad583fd6a3b8182a02facb01c02"
 }

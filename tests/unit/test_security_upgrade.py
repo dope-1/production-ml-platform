@@ -34,3 +34,22 @@ def test_truncated_backup_is_rejected(tmp_path):
     path.write_bytes(b"\x1f\x8b\x08")
     with pytest.raises((EOFError, tarfile.ReadError)):
         load_script("upgrade_security").verify_archive(path)
+
+
+def test_backup_uses_stable_container_image_reference(monkeypatch):
+    script = load_script("upgrade_security")
+    commands = []
+
+    def capture(*args):
+        commands.append(args)
+        return "sha256:old-id" if args[-2] == "{{.Image}}" else "project-mlflow:latest"
+
+    monkeypatch.setattr(script, "capture", capture)
+    assert script.container_image_details("mlflow-container") == (
+        "sha256:old-id",
+        "project-mlflow:latest",
+    )
+    assert commands == [
+        ("docker", "inspect", "--format", "{{.Image}}", "mlflow-container"),
+        ("docker", "inspect", "--format", "{{.Config.Image}}", "mlflow-container"),
+    ]

@@ -41,6 +41,14 @@ def verify_archive(path: Path) -> None:
         raise ValueError("Backup is missing the existing MLflow database")
 
 
+def container_image_details(container: str) -> tuple[str, str]:
+    old_image_id = capture("docker", "inspect", "--format", "{{.Image}}", container)
+    image_reference = capture("docker", "inspect", "--format", "{{.Config.Image}}", container)
+    if not old_image_id or not image_reference:
+        raise ValueError("Could not identify the existing MLflow container image")
+    return old_image_id, image_reference
+
+
 def main() -> None:
     if sys.version_info[:2] != (3, 12) or sys.prefix == sys.base_prefix:
         raise SystemExit("Use .venv/Scripts/python.exe (Python 3.12).")
@@ -56,7 +64,7 @@ def main() -> None:
     container = capture(*compose, "ps", "--quiet", "mlflow")
     if not container or "\n" in container:
         raise SystemExit("Expected one running local MLflow container.")
-    old_image = capture("docker", "inspect", "--format", "{{.Image}}", container)
+    old_image, backup_image = container_image_details(container)
     mounts = json.loads(capture("docker", "inspect", "--format", "{{json .Mounts}}", container))
     volumes = [m["Name"] for m in mounts if m["Type"] == "volume" and m["Destination"] == "/mlflow"]
     if len(volumes) != 1:
@@ -71,6 +79,11 @@ def main() -> None:
     run(sys.executable, "-m", "mypy")
     run(sys.executable, "-m", "pytest", "-q")
     run(*compose, "build", "--pull")
+    # Config.Image is the stable Compose tag. The rebuild moves that tag to the
+    # new image, whereas the old immutable image ID may be removed immediately.
+    backup_image_id = capture("docker", "image", "inspect", "--format", "{{.Id}}", backup_image)
+    if not backup_image_id:
+        raise SystemExit("The rebuilt MLflow image is unavailable; services were not stopped.")
 
     backup = Path(".state/backups") / datetime.now(UTC).strftime("security-%Y%m%dT%H%M%S%fZ")
     backup.mkdir(parents=True, exist_ok=False)
@@ -78,7 +91,14 @@ def main() -> None:
     shutil.copytree(".state/registry", backup / "registry")
     (backup / "metadata.json").write_text(
         json.dumps(
-            {"old_mlflow_image": old_image, "volume": volumes[0], "before": before}, indent=2
+            {
+                "old_mlflow_image": old_image,
+                "backup_image": backup_image,
+                "backup_image_id": backup_image_id,
+                "volume": volumes[0],
+                "before": before,
+            },
+            indent=2,
         )
         + "\n"
     )
@@ -99,7 +119,7 @@ def main() -> None:
                 "none",
                 "--mount",
                 f"type=volume,source={volumes[0]},target=/mlflow,readonly",
-                old_image,
+                backup_image,
                 "python",
                 "-c",
                 backup_code,
