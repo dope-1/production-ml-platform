@@ -99,6 +99,8 @@ class SecurityMiddleware:
                 out["Referrer-Policy"] = "no-referrer"
                 out["Cache-Control"] = "no-store"
                 out["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+                if config.environment == "production":
+                    out["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
                 # CORS must also apply to errors rejected before downstream middleware.
                 origin = headers.get("origin")
                 if origin is not None and origin in config.cors_origins:

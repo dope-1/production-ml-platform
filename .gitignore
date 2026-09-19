@@ -37,3 +37,17 @@ data/incoming/
 secrets/
 *.pem
 *.key
+
+# Terraform working state is local/sensitive; commit source and provider lock only.
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+terraform.tfvars
+*.auto.tfvars
+!terraform.tfvars.example

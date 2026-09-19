@@ -2,9 +2,20 @@
 
 A reproducible credit-default ML system with versioned data, MLflow experiments,
 gated promotion, real-time and batch inference, monitoring and controlled
-retraining. **Implemented: Milestones 1–9.** Cloud deployment and final polish remain
-Milestones 10–11. This is an engineering demonstration,
+retraining. **Executed locally: Milestones 1–9. Deployment-ready: Milestone 10.** The AWS
+deployment still requires owner-supplied credentials, DNS/certificate and approval of billable
+resources; final portfolio polish remains Milestone 11. This is an engineering demonstration,
 not a system approved for real lending decisions.
+
+## Milestone 10 AWS deployment
+
+The reference deployment uses an HTTPS Application Load Balancer, one ECS/Fargate task, private
+RDS PostgreSQL, encrypted EFS, versioned private S3, immutable ECR images, Secrets Manager and
+CloudWatch. It preserves the verified model-v1 contract and starts with zero tasks until the image,
+model state and secrets have been populated. Start with the
+[Milestone 10 deployment guide](docs/milestone-10-guide.md); the
+[deployment status](docs/milestone-10-report.md) distinguishes locally verified implementation
+from evidence that can exist only after a real AWS deployment.
 
 ## Milestone 9 upgrade — verified Batch 2 checkout
 
@@ -172,7 +183,8 @@ MLflow stores metadata/artifacts in its Docker volume; PostgreSQL holds the
 prediction ledger and monitoring reports. CI validates software, dependencies,
 source security, secrets, container controls and image vulnerabilities. The separate
 manual workflow validates models and benchmarks serving. See [Security](SECURITY.md)
-for current boundaries; cloud deployment is Milestone 10.
+for current boundaries. The Milestone 10 package does not authorize creating cloud resources or
+claim that a public deployment exists.
 
-See [architecture](docs/architecture.md), [data pipeline](docs/data_pipeline.md),
+See [architecture](docs/architecture.md), [AWS deployment](docs/milestone-10-guide.md), [data pipeline](docs/data_pipeline.md),
 [responsible AI](docs/responsible_ai.md), and [Batch 2 guide](docs/batch-2-guide.md).

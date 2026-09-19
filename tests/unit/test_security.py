@@ -97,6 +97,14 @@ def test_ingress_limits_and_security_headers(secured_client):
     assert secured_client.get("/health", headers={"Host": "evil.example"}).status_code == 400
 
 
+def test_production_adds_hsts(secured_settings):
+    secured_settings.environment = "production"
+    with TestClient(create_app(secured_settings)) as client:
+        assert client.get("/health").headers["Strict-Transport-Security"] == (
+            "max-age=31536000; includeSubDomains"
+        )
+
+
 def test_rate_limit_applies_to_shared_key_and_cannot_use_forwarded_ip_to_reset(secured_settings):
     secured_settings.rate_limit_per_minute = 2
     secured_settings.anonymous_rate_limit_per_minute = 2

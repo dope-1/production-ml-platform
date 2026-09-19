@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     db_connect_timeout: int = Field(default=3, ge=1, le=30)
     db_statement_timeout_ms: int = Field(default=3000, ge=100, le=30000)
     db_sslmode: Literal["disable", "prefer", "require", "verify-ca", "verify-full"] = "prefer"
+    db_sslrootcert: Path | None = None
     cors_origins: list[str] = []
     allowed_hosts: list[str] = ["localhost", "127.0.0.1", "testserver"]
     inference_enabled: bool = False
@@ -93,6 +94,8 @@ class Settings(BaseSettings):
         if self.environment == "production":
             if self.db_sslmode != "verify-full":
                 raise ValueError("Production requires ML_DB_SSLMODE=verify-full")
+            if self.db_sslrootcert is None or not self.db_sslrootcert.is_file():
+                raise ValueError("Production requires a readable ML_DB_SSLROOTCERT CA bundle")
             if not self.auth_enabled:
                 raise ValueError("Production requires ML_AUTH_ENABLED=true")
         return self

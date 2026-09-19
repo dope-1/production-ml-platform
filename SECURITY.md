@@ -16,8 +16,8 @@ tenants, revocation lists or an identity provider.
 
 `/health`, `/ready`, the dashboard shell and development documentation remain
 public on the local interface. Monitoring data and `/metrics` require a key.
-Production disables documentation and requires authentication and verified TLS
-for PostgreSQL. Configure its CA using libpq/`PGSSLROOTCERT`. An explicitly allowed
+Production disables documentation, adds HSTS and requires authentication and verified TLS
+for PostgreSQL. Configure its CA using `ML_DB_SSLROOTCERT` (also passed to libpq). An explicitly allowed
 Host is required. CORS uses explicit origins, with HTTPS origins in production.
 
 Ingress limits JSON bodies to 1 MiB, bounds body reception to ten seconds, rejects
@@ -70,8 +70,19 @@ Compose publishes API, PostgreSQL and MLflow only on loopback. The API is non-ro
 has a read-only root filesystem and registry mount, drops all Linux capabilities,
 and enables `no-new-privileges`. MLflow has no authentication in this local setup;
 never expose it publicly. Registry controllers share one local control directory.
-Cloud isolation, managed identity/secrets, TLS termination and deployment rollback
-are Milestone 10.
+The Milestone 10 AWS reference terminates TLS at an ALB, permits task ingress only from that ALB,
+keeps RDS/EFS private, injects runtime credentials from Secrets Manager, pins the release by ECR
+digest, scans on push and uses automatic ECS deployment rollback. The Fargate task has a public IP
+only to avoid a portfolio-cost NAT Gateway; its security group has no public ingress. MLflow remains
+private inside one task. A root one-shot init container only changes ownership of four empty
+task-local temporary volumes; it has no secrets, EFS, listener, or application data and exits before
+the UID-10001 workloads start. EFS is used by one MLflow writer only. Do not increase the service above one
+task until MLflow moves to a managed SQL backend and the rate limiter becomes shared.
+
+Cloud Terraform defaults to `deploy_service = false`. A real deployment requires a reviewed plan,
+validated ACM certificate/DNS, populated secrets, verified S3 model bootstrap, acceptable ECR scan
+and the external HTTPS verifier. The local container exceptions below do not authorize a cloud
+image; review the actual ECR scan independently. See [Milestone 10 guide](docs/milestone-10-guide.md).
 
 ## Required security gates
 
