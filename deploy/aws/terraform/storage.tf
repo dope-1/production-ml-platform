@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "bootstrap" {
-  bucket_prefix = "${local.name}-model-bootstrap-"
+  bucket_prefix = "${substr(local.name, 0, min(26, length(local.name)))}-bootstrap-"
   force_destroy = false
 }
 
