@@ -72,8 +72,8 @@ data "aws_iam_policy_document" "task" {
   }
 
   statement {
-    sid     = "MountMlflowEfs"
-    actions = ["elasticfilesystem:ClientMount", "elasticfilesystem:ClientWrite"]
+    sid       = "MountMlflowEfs"
+    actions   = ["elasticfilesystem:ClientMount", "elasticfilesystem:ClientWrite"]
     resources = [aws_efs_file_system.mlflow.arn]
 
     condition {

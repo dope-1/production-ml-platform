@@ -1,15 +1,9 @@
-aws_region      = "me-central-1"
-domain_name     = "ml.example.com"
-certificate_arn = "arn:aws:acm:me-central-1:123456789012:certificate/replace-me"
-route53_zone_id = "Z0123456789REPLACE"
-image_digest    = "sha256:replace-with-64-lowercase-hex-characters-after-first-push"
+aws_region   = "ap-south-1"
+image_digest = "sha256:replace-with-64-lowercase-hex-characters-after-first-push"
 
 # First apply with false. Populate ECR, S3 and both secrets before changing to true.
 deploy_service = false
 
-# Restrict this to your public IP while evaluating the portfolio deployment.
-allowed_cidrs = ["203.0.113.10/32"]
-
-# Optional but strongly recommended.
+# Optional but strongly recommended. Alerts do not stop spending.
 budget_email       = "owner@example.com"
-monthly_budget_usd = 75
+monthly_budget_usd = 5

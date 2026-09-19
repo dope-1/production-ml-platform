@@ -15,36 +15,9 @@ variable "environment" {
 }
 
 variable "aws_region" {
-  description = "Deployment region; me-central-1 is the documented reference."
+  description = "Deployment region; ap-south-1 is the documented operational fallback."
   type        = string
-  default     = "me-central-1"
-}
-
-variable "domain_name" {
-  description = "Public API hostname covered by certificate_arn."
-  type        = string
-
-  validation {
-    condition     = can(regex("^[A-Za-z0-9.-]+$", var.domain_name)) && !can(regex("[/:*]", var.domain_name))
-    error_message = "domain_name must be a hostname without scheme, path, port or wildcard."
-  }
-}
-
-variable "certificate_arn" {
-  description = "Validated ACM certificate ARN in aws_region."
-  type        = string
-
-  validation {
-    condition     = can(regex("^arn:aws[a-z-]*:acm:", var.certificate_arn))
-    error_message = "certificate_arn must be an ACM certificate ARN."
-  }
-}
-
-variable "route53_zone_id" {
-  description = "Optional Route 53 hosted-zone ID. Leave null to create DNS externally."
-  type        = string
-  default     = null
-  nullable    = true
+  default     = "ap-south-1"
 }
 
 variable "image_digest" {
@@ -72,12 +45,6 @@ variable "aws_cli_image" {
   description = "Reviewed AWS CLI image used by the one-shot bootstrap container."
   type        = string
   default     = "public.ecr.aws/aws-cli/aws-cli:2.31.22"
-}
-
-variable "allowed_cidrs" {
-  description = "IPv4 CIDRs permitted to reach the HTTPS load balancer."
-  type        = list(string)
-  default     = ["0.0.0.0/0"]
 }
 
 variable "deploy_service" {
@@ -136,5 +103,5 @@ variable "budget_email" {
 
 variable "monthly_budget_usd" {
   type    = number
-  default = 75
+  default = 5
 }

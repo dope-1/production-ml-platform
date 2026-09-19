@@ -2,7 +2,8 @@
 
 ## Implemented and locally verifiable
 
-- AWS reference architecture and Terraform for VPC, HTTPS ALB, ECS/Fargate, private RDS,
+- AWS reference architecture and Terraform for VPC, domainless CloudFront HTTPS, protected ALB,
+  ECS/Fargate, private RDS,
   encrypted EFS, versioned private S3, ECR, Secrets Manager, IAM, CloudWatch and budget alerts.
 - Two-phase deployment prevents ECS from starting before the image, model state and secrets exist.
 - Digest-pinned release image containing only the verified registry controller and pinned RDS CA.
@@ -14,9 +15,10 @@
 ## Intentionally pending
 
 Milestone 10 is deployment-ready but is not represented as deployed until the owner supplies an AWS
-account/region session, DNS hostname, and validated ACM certificate, approves the Terraform plan and
-runs the external verifier. These steps create billable resources and cannot be safely guessed or
-performed against an unspecified account.
+account/region session, approves the Terraform plan, stages the protected release inputs and runs
+the external verifier against the generated `*.cloudfront.net` URL. No purchased domain or ACM
+certificate is required. These steps create billable resources and cannot be safely performed
+against an unspecified account.
 
 The completion evidence is a successful `reports/milestone-10-verification.json` from the real HTTPS
 endpoint plus the applied Terraform state, ECR digest, S3 release manifest/version IDs and green CI

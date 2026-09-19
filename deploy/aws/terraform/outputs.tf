@@ -22,8 +22,12 @@ output "load_balancer_dns_name" {
   value = aws_lb.api.dns_name
 }
 
+output "cloudfront_domain_name" {
+  value = aws_cloudfront_distribution.api.domain_name
+}
+
 output "api_url" {
-  value = "https://${var.domain_name}"
+  value = "https://${aws_cloudfront_distribution.api.domain_name}"
 }
 
 output "ecs_cluster_name" {

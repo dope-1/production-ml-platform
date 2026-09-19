@@ -8,7 +8,8 @@ creates billable resources, so read the cost and teardown sections before applyi
 
 ```mermaid
 flowchart TD
-    U[HTTPS client] --> ALB[Application Load Balancer]
+    U[HTTPS client] --> CF[CloudFront default HTTPS domain]
+    CF --> ALB[Protected Application Load Balancer]
     ALB --> API[ECS Fargate task: API]
     API --> DB[(Private RDS PostgreSQL)]
     API --> MF[Private MLflow sidecar]
@@ -19,7 +20,12 @@ flowchart TD
     API --> CW[CloudWatch logs and alarms]
 ```
 
-- The ALB is the only public listener and accepts HTTPS on port 443. There is no HTTP listener.
+- CloudFront supplies the AWS-owned `*.cloudfront.net` HTTPS endpoint, so this deployment needs no
+  purchased domain, Route 53 zone, or ACM certificate.
+- The ALB origin accepts HTTP only from AWS's CloudFront origin-facing network. Its default action
+  is `403`; forwarding additionally requires a generated `X-Origin-Verify` header held in Terraform
+  state and the CloudFront configuration. End-user traffic is always redirected to HTTPS at the
+  CloudFront edge.
 - The task receives a public IP only for outbound AWS API/image access, avoiding a NAT Gateway.
   Its security group accepts port 8000 only from the ALB security group.
 - RDS and EFS use isolated subnets and accept traffic only from the task security group.
@@ -47,17 +53,17 @@ through localhost and will not mark the API healthy until PostgreSQL and model v
 
 Do not proceed until all of these are available:
 
-1. An AWS account and AWS CLI v2 session with permission to create VPC, ECS, ECR, RDS, EFS, S3,
-   Secrets Manager, IAM, CloudWatch, ALB, Route 53 (optional), and Budgets (optional) resources.
+1. An AWS account and AWS CLI v2 session with permission to create VPC, CloudFront, ECS, ECR, RDS,
+   EFS, S3, Secrets Manager, IAM, CloudWatch, ALB, and Budgets (optional) resources.
 2. Terraform 1.8 or newer and Docker Desktop.
-3. A DNS hostname and a validated ACM certificate in the deployment region. If DNS is not in Route
-   53, leave `route53_zone_id = null` and create the ALB alias/CNAME with the external provider.
-4. The successful Milestone 9 security backup directory containing `metadata.json`, `registry/`,
+3. The successful Milestone 9 security backup directory containing `metadata.json`, `registry/`,
    and `mlflow.tar.gz`.
-5. A clean repository and a green `Software and security CI` run on `main`.
+4. A clean repository and a green `Software and security CI` run on `main`.
 
 For shared or long-lived use, configure a versioned, encrypted remote Terraform backend before the
 first apply. Local `tfstate` is ignored by Git but remains sensitive and must be backed up securely.
+The reference region is Mumbai (`ap-south-1`). It was selected as the operational fallback after
+the AWS console displayed an availability warning for the originally considered UAE region.
 
 ## 1. Recheck the release
 
@@ -111,16 +117,16 @@ Copy-Item terraform.tfvars.example terraform.tfvars
 code terraform.tfvars
 terraform fmt -recursive
 terraform fmt -check -recursive
-terraform init
+terraform init -upgrade
 terraform validate
 terraform plan -out milestone10.tfplan
 terraform apply milestone10.tfplan
 ```
 
 Use a placeholder of `sha256:` plus 64 zeros for the first `image_digest`, keep
-`deploy_service = false`, restrict `allowed_cidrs` to your IP where practical, and set a budget
-email. Review the entire plan before approval. Phase 1 creates the costly infrastructure but keeps
-the ECS desired count at zero.
+`deploy_service = false`, and set your budget email. Review the entire plan before approval. Phase
+1 creates billable infrastructure but keeps the ECS desired count at zero. The default budget is
+USD 5; it sends alerts and is not a hard spending cap.
 
 ## 4. Push the release and populate protected inputs
 
@@ -129,7 +135,7 @@ values into command history:
 
 ```powershell
 Set-Location ..\..\..
-$region = 'me-central-1'
+$region = 'ap-south-1'
 $repo = terraform -chdir=deploy\aws\terraform output -raw ecr_repository_url
 $bucket = terraform -chdir=deploy\aws\terraform output -raw bootstrap_bucket
 $prefix = terraform -chdir=deploy\aws\terraform output -raw bootstrap_prefix
@@ -227,16 +233,22 @@ The S3 release prefix is versioned and must never be overwritten for a different
 
 ## Cost and teardown
 
-The main fixed costs are the continuously running Fargate task, Application Load Balancer, RDS
-instance/storage/backups, public IPv4 address, and Secrets Manager secrets. EFS, S3, ECR,
-CloudWatch, and transfer are usage-based. The design omits a NAT Gateway and Multi-AZ RDS to reduce
-portfolio cost; that also reduces availability. Prices vary by region and change over time, so use
-the [AWS Pricing Calculator](https://calculator.aws/) with the selected region before applying and
-check the official pricing pages for [Fargate](https://aws.amazon.com/fargate/pricing/),
+CloudFront's AWS-owned hostname removes domain-registration and certificate costs, but it does not
+make the full stack permanently free. The main fixed costs are the continuously running Fargate
+task, Application Load Balancer, RDS instance/storage/backups, public IPv4 address, and Secrets
+Manager secrets. EFS, S3, ECR, CloudFront, CloudWatch, and transfer are usage-based. New-account
+credits may absorb eligible usage, but budgets only alert and do not stop resources or guarantee a
+zero bill.
+
+For this portfolio deployment, apply, collect verification evidence, and destroy the stack in the
+same work session. Do not leave it running overnight. The design omits a NAT Gateway and Multi-AZ
+RDS to reduce cost; that also reduces availability. Prices vary by region and change over time, so
+use the [AWS Pricing Calculator](https://calculator.aws/) with `ap-south-1` before applying and check
+the official pricing pages for [CloudFront](https://aws.amazon.com/cloudfront/pricing/),
+[Fargate](https://aws.amazon.com/fargate/pricing/),
 [RDS PostgreSQL](https://aws.amazon.com/rds/postgresql/pricing/),
 [Application Load Balancing](https://aws.amazon.com/elasticloadbalancing/pricing/), and
-[public IPv4](https://aws.amazon.com/vpc/pricing/). The optional AWS Budget alerts are guardrails,
-not spend caps.
+[public IPv4](https://aws.amazon.com/vpc/pricing/).
 
 To stop compute charges temporarily, set `deploy_service = false` and apply. ALB, RDS, EFS, and
 storage charges continue. For full teardown, first preserve the release manifest, S3 version IDs,
@@ -249,5 +261,6 @@ false`, so deletion remains blocked until its versioned objects are deliberately
 - [AWS RDS TLS and CA bundles](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html)
 - [Amazon ECS with EFS](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/efs-volumes.html)
 - [Passing secrets to ECS](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/specifying-sensitive-data.html)
-- [Application Load Balancer HTTPS listeners](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html)
+- [Restrict ALB access to CloudFront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/restrict-access-to-load-balancer.html)
+- [CloudFront default domain and certificate](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistValuesGeneral.html)
 - [Fargate task networking](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-task-networking.html)

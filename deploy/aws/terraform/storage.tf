@@ -184,12 +184,12 @@ resource "aws_db_instance" "app" {
   publicly_accessible    = false
   multi_az               = false
 
-  backup_retention_period   = 7
-  copy_tags_to_snapshot     = true
+  backup_retention_period    = 7
+  copy_tags_to_snapshot      = true
   auto_minor_version_upgrade = true
-  deletion_protection       = var.deletion_protection
-  skip_final_snapshot       = false
-  final_snapshot_identifier = var.db_final_snapshot_identifier
+  deletion_protection        = var.deletion_protection
+  skip_final_snapshot        = false
+  final_snapshot_identifier  = var.db_final_snapshot_identifier
 
   enabled_cloudwatch_logs_exports = ["postgresql", "upgrade"]
 }

@@ -78,30 +78,36 @@ resource "aws_lb_target_group" "api" {
   }
 }
 
-resource "aws_lb_listener" "https" {
+resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.api.arn
-  port              = 443
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
-  certificate_arn   = var.certificate_arn
+  port              = 80
+  protocol          = "HTTP"
 
   default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.api.arn
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Forbidden"
+      status_code  = "403"
+    }
   }
 }
 
-resource "aws_route53_record" "api" {
-  count = var.route53_zone_id == null ? 0 : 1
+resource "aws_lb_listener_rule" "cloudfront" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 1
 
-  zone_id = var.route53_zone_id
-  name    = var.domain_name
-  type    = "A"
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.api.arn
+  }
 
-  alias {
-    name                   = aws_lb.api.dns_name
-    zone_id                = aws_lb.api.zone_id
-    evaluate_target_health = true
+  condition {
+    http_header {
+      http_header_name = "X-Origin-Verify"
+      values           = [random_password.origin_header.result]
+    }
   }
 }
 
@@ -174,23 +180,23 @@ resource "aws_ecs_task_definition" "app" {
         { sourceVolume = "mlflow", containerPath = "/mlflow", readOnly = false },
         { sourceVolume = "bootstrap-tmp", containerPath = "/tmp", readOnly = false },
       ]
-      user        = "10001"
-      dependsOn   = [{ containerName = "volume-permissions", condition = "SUCCESS" }]
+      user      = "10001"
+      dependsOn = [{ containerName = "volume-permissions", condition = "SUCCESS" }]
       logConfiguration = merge(local.awslogs, {
         options = merge(local.awslogs.options, { awslogs-group = aws_cloudwatch_log_group.init.name })
       })
     },
     {
-      name      = "migrate"
-      image     = local.image_uri
-      essential = false
-      command   = ["alembic", "upgrade", "head"]
-      environment = local.common_environment
-      secrets     = local.database_secret
-      dependsOn   = [{ containerName = "bootstrap", condition = "SUCCESS" }]
+      name                   = "migrate"
+      image                  = local.image_uri
+      essential              = false
+      command                = ["alembic", "upgrade", "head"]
+      environment            = local.common_environment
+      secrets                = local.database_secret
+      dependsOn              = [{ containerName = "bootstrap", condition = "SUCCESS" }]
       readonlyRootFilesystem = true
-      mountPoints = [{ sourceVolume = "migrate-tmp", containerPath = "/tmp", readOnly = false }]
-      user        = "10001"
+      mountPoints            = [{ sourceVolume = "migrate-tmp", containerPath = "/tmp", readOnly = false }]
+      user                   = "10001"
       logConfiguration = merge(local.awslogs, {
         options = merge(local.awslogs.options, { awslogs-group = aws_cloudwatch_log_group.init.name })
       })
@@ -209,7 +215,7 @@ resource "aws_ecs_task_definition" "app" {
         { name = "MLFLOW_SERVER_ALLOWED_HOSTS", value = "127.0.0.1:5000,localhost:5000" },
         { name = "HOME", value = "/tmp" },
       ]
-      dependsOn   = [{ containerName = "bootstrap", condition = "SUCCESS" }]
+      dependsOn = [{ containerName = "bootstrap", condition = "SUCCESS" }]
       mountPoints = [
         { sourceVolume = "mlflow", containerPath = "/mlflow", readOnly = false },
         { sourceVolume = "mlflow-tmp", containerPath = "/tmp", readOnly = false },
@@ -240,8 +246,8 @@ resource "aws_ecs_task_definition" "app" {
       environment = concat(local.common_environment, [
         { name = "ML_INFERENCE_ENABLED", value = "true" },
         { name = "ML_AUTH_ENABLED", value = "true" },
-        { name = "ML_ALLOWED_HOSTS", value = jsonencode([var.domain_name, "127.0.0.1", "localhost"]) },
-        { name = "ML_CORS_ORIGINS", value = jsonencode(["https://${var.domain_name}"]) },
+        { name = "ML_ALLOWED_HOSTS", value = jsonencode([aws_cloudfront_distribution.api.domain_name, aws_lb.api.dns_name, "127.0.0.1", "localhost"]) },
+        { name = "ML_CORS_ORIGINS", value = jsonencode(["https://${aws_cloudfront_distribution.api.domain_name}"]) },
         { name = "ML_TRACKING_URI", value = "http://127.0.0.1:5000" },
         { name = "ML_CONTROL_DIR", value = "/registry-control" },
         { name = "HOME", value = "/tmp" },
@@ -255,7 +261,7 @@ resource "aws_ecs_task_definition" "app" {
         { containerName = "migrate", condition = "SUCCESS" },
         { containerName = "mlflow", condition = "HEALTHY" },
       ]
-      mountPoints = [{ sourceVolume = "api-tmp", containerPath = "/tmp", readOnly = false }]
+      mountPoints            = [{ sourceVolume = "api-tmp", containerPath = "/tmp", readOnly = false }]
       readonlyRootFilesystem = true
       user                   = "10001"
       healthCheck = {
@@ -273,11 +279,11 @@ resource "aws_ecs_task_definition" "app" {
 }
 
 resource "aws_ecs_service" "api" {
-  name            = local.name
-  cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.app.arn
-  desired_count   = var.deploy_service ? 1 : 0
-  launch_type     = "FARGATE"
+  name             = local.name
+  cluster          = aws_ecs_cluster.main.id
+  task_definition  = aws_ecs_task_definition.app.arn
+  desired_count    = var.deploy_service ? 1 : 0
+  launch_type      = "FARGATE"
   platform_version = "1.4.0"
 
   enable_ecs_managed_tags = true
@@ -301,5 +307,5 @@ resource "aws_ecs_service" "api" {
     container_port   = 8000
   }
 
-  depends_on = [aws_lb_listener.https, aws_efs_mount_target.mlflow]
+  depends_on = [aws_lb_listener_rule.cloudfront, aws_efs_mount_target.mlflow]
 }
