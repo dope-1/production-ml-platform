@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-09-22T06:27:41.128133+00:00",
+  "scope": "Local demonstration; no AWS verification or real-customer performance claim.",
+  "checks": {
+    "health": true,
+    "ready": true,
+    "anonymous_denied": true
+  },
+  "model": {
+    "model_name": "credit-default",
+    "model_version": "1",
+    "run_id": "3ed34af186ec4fe28dcbd36f5136a5f6",
+    "threshold": 0.2,
+    "schema_hash": "21d49ebd26716819986f7a0b32b6011c4cf0b67dd34f41a8bb98c6eef55b691f"
+  },
+  "benchmark": {
+    "requests": 200,
+    "warmup_requests": 10,
+    "concurrency": 4,
+    "successes": 200,
+    "errors": 0,
+    "duration_seconds": 9.76315249997424,
+    "throughput_rps": 20.4851865215183,
+    "model_versions": [
+      "1"
+    ],
+    "error_rate": 0.0,
+    "latency_ms": {
+      "p50": 193.8334500300698,
+      "p95": 227.16888497525358,
+      "p99": 252.1024759911233
+    },
+    "client_environment": {
+      "platform": "Windows-10-10.0.19045-SP0",
+      "python": "3.12.11",
+      "processor": "Intel64 Family 6 Model 165 Stepping 2, GenuineIntel",
+      "logical_cpus": 12
+    },
+    "scope": "Local loopback HTTP; backend and server hardware require operator confirmation."
+  },
+  "monitoring": {
+    "live": {
+      "model_version": "1",
+      "cohort": "live",
+      "prediction_count": 0,
+      "created_at": "2026-09-22T06:27:41.080652+00:00",
+      "window": {
+        "start": "2026-09-21T06:27:41.080652+00:00",
+        "end": "2026-09-22T06:27:41.080652+00:00",
+        "hours": 24,
+        "labels_as_of": "2026-09-22T06:27:41.080652+00:00"
+      },
+      "operational": {
+        "requests": 0,
+        "error_rate": null,
+        "server_error_rate": null,
+        "latency_ms": {
+          "p50": null,
+          "p95": null,
+          "p99": null
+        }
+      },
+      "drift": {
+        "status": "insufficient_samples",
+        "drift_trigger": false
+      },
+      "performance": {
+        "status": "insufficient_labels",
+        "labeled": 0,
+        "coverage": 0.0,
+        "support": {
+          "0": 0,
+          "1": 0
+        }
+      }
+    },
+    "verification": {
+      "model_version": "1",
+      "cohort": "verification",
+      "prediction_count": 0,
+      "created_at": "2026-09-22T06:27:41.091108+00:00",
+      "window": {
+        "start": "2026-09-21T06:27:41.091108+00:00",
+        "end": "2026-09-22T06:27:41.091108+00:00",
+        "hours": 24,
+        "labels_as_of": "2026-09-22T06:27:41.091108+00:00"
+      },
+      "operational": {
+        "requests": 0,
+        "error_rate": null,
+        "server_error_rate": null,
+        "latency_ms": {
+          "p50": null,
+          "p95": null,
+          "p99": null
+        }
+      },
+      "drift": {
+        "status": "insufficient_samples",
+        "drift_trigger": false
+      },
+      "performance": {
+        "status": "insufficient_labels",
+        "labeled": 0,
+        "coverage": 0.0,
+        "support": {
+          "0": 0,
+          "1": 0
+        }
+      }
+    },
+    "benchmark": {
+      "model_version": "1",
+      "cohort": "benchmark",
+      "prediction_count": 210,
+      "created_at": "2026-09-22T06:27:41.102676+00:00",
+      "window": {
+        "start": "2026-09-21T06:27:41.102676+00:00",
+        "end": "2026-09-22T06:27:41.102676+00:00",
+        "hours": 24,
+        "labels_as_of": "2026-09-22T06:27:41.102676+00:00"
+      },
+      "operational": {
+        "requests": 210,
+        "error_rate": 0.0,
+        "server_error_rate": 0.0,
+        "latency_ms": {
+          "p50": 159.36794549998012,
+          "p95": 188.57725080001728,
+          "p99": 201.1914797699501
+        }
+      },
+      "drift": {
+        "status": "drift",
+        "drift_trigger": true
+      },
+      "performance": {
+        "status": "insufficient_labels",
+        "labeled": 0,
+        "coverage": 0.0,
+        "support": {
+          "0": 0,
+          "1": 0
+        }
+      }
+    }
+  },
+  "source": {
+    "commit": "3d01bc99c433406b18a2bd618d3e5cb146ded1f4",
+    "worktree_dirty": true
+  }
+}

@@ -1,190 +1,149 @@
 # Production ML Platform
 
-A reproducible credit-default ML system with versioned data, MLflow experiments,
-gated promotion, real-time and batch inference, monitoring and controlled
-retraining. **Executed locally: Milestones 1–9. Deployment-ready: Milestone 10.** The AWS
-deployment still requires owner-supplied credentials, DNS/certificate and approval of billable
-resources; final portfolio polish remains Milestone 11. This is an engineering demonstration,
-not a system approved for real lending decisions.
+[![Software and security CI](https://github.com/dope-1/production-ml-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/dope-1/production-ml-platform/actions/workflows/ci.yml)
 
-## Milestone 10 AWS deployment
+A credit-default ML engineering portfolio: reproducible data preparation, model selection,
+MLflow tracking, guarded promotion and rollback, authenticated inference, monitoring and
+controlled retraining. Built with Python, scikit-learn, LightGBM, FastAPI, PostgreSQL, Docker,
+GitHub Actions and Terraform.
 
-The reference deployment uses an HTTPS Application Load Balancer, one ECS/Fargate task, private
-RDS PostgreSQL, encrypted EFS, versioned private S3, immutable ECR images, Secrets Manager and
-CloudWatch. It preserves the verified model-v1 contract and starts with zero tasks until the image,
-model state and secrets have been populated. Start with the
-[Milestone 10 deployment guide](docs/milestone-10-guide.md); the
-[deployment status](docs/milestone-10-report.md) distinguishes locally verified implementation
-from evidence that can exist only after a real AWS deployment.
+**Local platform implemented through Milestone 9; local portfolio evidence captured on
+22 September 2026. AWS was partially provisioned; CloudFront account verification was
+declined and Milestone 10 remains incomplete.** This historical-data demonstration is not approved for
+lending decisions or present-day UAE customer prediction. See the
+[deployment status](docs/milestone-10-report.md) and [portfolio checklist](docs/milestone-11-report.md).
 
-## Milestone 9 upgrade — verified Batch 2 checkout
+## Start the review here
 
-Copy only the patch's included files into your existing project, then run in VS Code:
-
-```powershell
-.\.venv\Scripts\python.exe scripts\upgrade_milestone9.py
-```
-
-This enables API/admin keys, runs focused checks and rebuilds only the API. Your
-model, database credentials and saved observations are retained. The dashboard now
-requires `ML_API_KEY` from `.env`; paste its value into the key field and click
-**Connect**. Select **verification** or **benchmark** to see earlier test traffic.
-[Milestone 9 guide](docs/milestone-9-guide.md) covers keys, CI/security scans and the
-next steps. [Verification evidence](docs/milestone-9-report.md) records local results
-and checks still requiring Docker/GitHub Actions.
-
-## Upgrade from your verified Batch 1 — Windows / VS Code
-
-Copy the contents of this archive's `production-ml-platform` directory into your
-existing `E:\Projects\production-ml-platform`, replacing source files. Keep your
-existing `.env`, `.venv`, `.state`, processed data, model reports and Docker
-volumes. The archive excludes those private/generated files. Keep the folder
-name so Compose continues using your existing volumes.
-
-Start Docker Desktop, open the project in VS Code and run:
-
-```powershell
-.\.venv\Scripts\python.exe scripts\upgrade_batch2.py
-```
-
-This installs pinned dependencies, rebuilds the services, migrates PostgreSQL,
-adds a verified monitoring reference to your approved model and loads it into
-the API. It runs software checks, isolated champion/challenger tests, real
-service verification, delayed-label checks, drift simulations and a benchmark.
-Your live champion is retained. A local admin key is generated in `.env`.
-
-| Interface | Local URL |
+| Question | Evidence |
 |---|---|
-| Monitoring dashboard | http://127.0.0.1:8000/api/v1/dashboard |
-| Interactive API | http://127.0.0.1:8000/docs |
-| MLflow experiments and registry | http://127.0.0.1:5000 |
+| How does the system work? | [Architecture and trade-offs](docs/architecture.md) |
+| How was the model selected? | [Model card](docs/model_card.md), [training comparison](docs/verification/comparison.json) |
+| What does it achieve? | Test ROC-AUC **0.7847**, average precision **0.5801**; [reference evidence](docs/verification/candidate.json) |
+| What are its limitations? | [Responsible AI report](docs/responsible_ai.md) |
+| How is it monitored? | [Monitoring report](docs/monitoring-report.md) |
+| How fast is it? | [Benchmark report](docs/benchmark-report.md), with measurement scope |
+| Can I see a demo? | [Local demonstration and screenshot guide](docs/demo-guide.md) |
+| How is it secured and deployed? | [Security](SECURITY.md), [AWS guide](docs/milestone-10-guide.md) |
 
-Select **verification**, **benchmark** or a **synthetic** cohort in the dashboard
-to inspect the verification run. The live cohort remains empty until you use it.
-Reports are written to `reports/batch-2-verification.json`,
-`reports/api-benchmark.json` and `reports/simulation/`.
+The reviewed [local benchmark](docs/verification/portfolio/benchmark.md) completed 200/200
+timed requests with zero errors: P95 **227.17 ms**, throughput **20.49 requests/s**, concurrency 4.
+The [monitoring capture](docs/verification/portfolio/monitoring.md) records 210 benchmark
+predictions including 10 warmups, drift on repeated example inputs, and no observed labels.
+[JSON evidence](docs/verification/portfolio/evidence.json) records the date, client environment
+and serving run. These are local HTTP results, not a cloud benchmark or model-quality verdict.
 
-[Complete Batch 2 guide](docs/batch-2-guide.md) covers prediction payloads, batch
-CSV scoring, labels, monitoring windows, retraining, model reload and rollback.
-[Verification report](docs/batch-2-report.md) separates tests run here from the
-Docker/PostgreSQL checks performed on your machine.
+The reference random forest was selected using training-only grouped cross-validation.
+Its threshold of 0.20 was selected on validation data. Test recall is 0.6660 and precision
+is 0.4611: the recall target comes with substantial false positives. These historical
+reference-run results are not estimates of current lending performance.
 
-## Use the prediction API
+![Reference held-out test evaluation](docs/verification/test-evaluation.png)
+
+## Engineering capabilities
+
+- Pinned data and deterministic profile-grouped splits prevent duplicate-profile leakage.
+- Six configurations across logistic regression, random forest and LightGBM; the fitted
+  preprocessing pipeline is shared by training, HTTP inference and batch scoring.
+- MLflow provenance, artifact hashes, validation/comparison gates and a controller audit
+  journal. Explicit reload verifies the new snapshot; failure retains the serving champion.
+- API/admin roles, strict inputs, request bounds, rate limiting, SHAP reconstruction and
+  durable prediction writes before returning success.
+- Feature/score drift, delayed-label performance and isolated simulation cohorts. Retraining
+  requires new actual labels, preserves holdouts and can reject a challenger.
+- Linux/Windows CI, dependency/container security gates and two-phase AWS infrastructure.
+  Temporary vulnerability exceptions remain explicit; green CI is not production clearance.
+
+## Run an existing configured checkout
+
+Use Python 3.12 and Docker Desktop with Linux containers. From PowerShell at the repository root:
+
+```powershell
+docker compose up --detach --wait
+.\.venv\Scripts\python.exe scripts\verify_milestone9.py
+```
+
+| Interface | Address |
+|---|---|
+| Monitoring dashboard | [Local dashboard](http://127.0.0.1:8000/api/v1/dashboard) |
+| Development API documentation | [Local API docs](http://127.0.0.1:8000/docs) |
+| Private MLflow UI | [Local MLflow](http://127.0.0.1:5000) |
+
+Connect with the local API key in the dashboard's masked field. Select a cohort containing
+observations; an empty `live` cohort is a valid empty state. Preserve `.env` and Docker volumes.
+
+Predict with the bundled public example without printing credentials:
 
 ```powershell
 $headers = @{ 'X-API-Key' = (.\.venv\Scripts\python.exe -c "from ml_platform.core.config import Settings; print(Settings().api_key.get_secret_value())") }
 $body = Get-Content examples\predict.json -Raw
 Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/api/v1/predict -Headers $headers -ContentType application/json -Body $body
-Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/api/v1/explain -Headers $headers -ContentType application/json -Body $body
 Remove-Variable headers
 ```
 
-The input contract contains the actual 19 UCI financial features. Responses
-include score, class, model version, UTC timestamp, request ID and prediction ID.
-The same fitted preprocessing pipeline runs in training and inference. The
-explanation includes its output space and verifies that contributions reconstruct
-the score; it does not make a causal claim.
-
-```powershell
-.\.venv\Scripts\python.exe -m ml_platform.ops batch --input examples\batch-input.csv --output reports\batch-scores.csv
-.\.venv\Scripts\python.exe -m ml_platform.ops monitor --hours 24
-.\.venv\Scripts\python.exe -m ml_platform.ops simulate
-```
-
-Batch scoring is vectorized. Monitoring combines numeric PSI, categorical total
-variation, score/class drift, HTTP metrics and delayed-label quality/calibration.
-Feature payloads and customer IDs are absent from the monitoring ledger. Feature
-bins and scores still deserve protection and retention limits.
-
-## Controlled retraining
-
-```powershell
-.\.venv\Scripts\python.exe -m ml_platform.ops retrain --labeled-data data\incoming\labeled.csv --trigger manual
-```
-
-Drift and performance modes require fresh live evidence. Retraining requires a
-separate validated dataset of new features and actual labels, preserves both
-holdouts byte-for-byte, performs grouped CV, registers a challenger and applies
-the existing promotion gate. Rejected challengers retain the champion. Simulation
-cohorts never trigger live retraining. After a promotion/rollback, explicitly
-reload the API or run `docker compose restart ml-api`; serving pins an approved
-snapshot until then. Read the guide for the labeled-data schema and safeguards.
+Use the [demo guide](docs/demo-guide.md) for explanation, monitoring, screenshots and a
+single command to collect actual local benchmark evidence in isolated demonstration cohorts.
 
 ## Fresh installation
 
-Use Python 3.12 and Docker Desktop/Engine with Compose v2 or later. Create `.venv`
-with your installed Python 3.12 interpreter, then create `.env` **once**:
+Create `.venv` with an installed Python 3.12 interpreter. On Windows, `py -3.12 -m venv .venv`
+works when that interpreter is registered with the launcher. Then run sequentially, stopping
+on any failure:
 
 ```powershell
-.\.venv\Scripts\python.exe -c "from pathlib import Path; import secrets; Path('.env').write_text(Path('.env.example').read_text().replace('ML_DB_PASSWORD=', 'ML_DB_PASSWORD=' + secrets.token_hex(24)))"
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.lock
+.\.venv\Scripts\python.exe -m pip install --no-deps -e .
+.\.venv\Scripts\python.exe -c "from pathlib import Path; import secrets; p=Path('.env'); assert not p.exists(), 'Keep the existing .env'; p.write_text(Path('.env.example').read_text().replace('ML_DB_PASSWORD=', 'ML_DB_PASSWORD=' + secrets.token_hex(24)))"
 .\.venv\Scripts\python.exe scripts\upgrade_milestone9.py --configure-only
 .\.venv\Scripts\python.exe scripts\upgrade_and_verify.py
 .\.venv\Scripts\python.exe scripts\upgrade_batch2.py
 ```
 
-The first script bootstraps Milestones 1–5 with inference disabled until a model
-exists. A successful promotion is required before Batch 2. Review a REJECT result;
-do not weaken gates merely to complete a demo. Do not regenerate credentials for
-an initialized PostgreSQL volume. On Linux use `.venv/bin/python`.
+These setup commands install dependencies, prepare data, train/register the initial model and
+build services. Review rejected promotions; never weaken gates to force a demo. Keep an existing
+`.env`, registry state and volumes. On Linux use `.venv/bin/python`. Detailed upgrade instructions:
+[Milestones 6–8](docs/batch-2-guide.md), [Milestone 9](docs/milestone-9-guide.md).
 
-## Training and registry
+## AWS architecture and status
 
-```bash
-python -m ml_platform.cli prepare
-python -m ml_platform.cli train
-python -m ml_platform.cli register
-python -m ml_platform.cli promote --version 1
-python -m ml_platform.cli status
-python -m ml_platform.cli rollback --version 1 --reason "Investigating the newer model's deployment behavior"
-```
+The target public path is CloudFront HTTPS on an AWS-provided domain, then an ALB restricted
+to CloudFront origin addresses and a secret origin header, then one ECS/Fargate task.
+CloudFront-to-ALB uses HTTP. RDS PostgreSQL uses verified TLS; encrypted EFS holds MLflow
+SQLite metadata/artifacts. ECR, private S3, Secrets Manager and CloudWatch support deployment.
+This design uses the AWS-provided domain, but is blocked on this account by the declined
+CloudFront verification. No alternative public deployment has been implemented or verified.
 
-Use the version actually returned by registration. All mutations must share the
-same persistent controller directory. Pending writes require explicit
-`python -m ml_platform.cli reconcile`. Global `--tracking-uri`, `--config` and
-`--control-dir` flags precede the subcommand. The default host tracking URI is
-http://127.0.0.1:5000. The serving container uses the internal Docker URI and a
-read-only controller mount. [Registry operations](docs/registry.md) describes the
-single-controller boundary and integrity checks.
+One task matches the SQLite registry and in-memory limiter; this is not a highly available
+serving fleet. A partial apply is not a working deployment. The actual HTTPS verifier must pass
+before deployment status changes. See the [AWS guide](docs/milestone-10-guide.md).
 
-## Data and methodology
+## Repository map
 
-The pinned UCI Default of Credit Card Clients archive contains 30,000 historical
-Taiwan observations; source and CC BY attribution are in `data/README.md`.
-Financial-profile groups remain together in deterministic train/validation/test
-partitions. Model inputs exclude identifiers, targets and demographic audit
-fields; the saved pipeline adds three financial ratios.
+| Location | Responsibility |
+|---|---|
+| `src/ml_platform/data`, `features`, `training` | Validated data, deterministic features, model selection/evaluation |
+| `src/ml_platform/models`, `inference` | Registry, verified loading, predictions, explanations and batch scoring |
+| `src/ml_platform/api`, `db`, `core` | HTTP/security, persistence and configuration |
+| `src/ml_platform/monitoring`, `retraining`, `observability` | Drift, labels, challengers, metrics and logs |
+| `configs`, `examples`, `scripts` | Policy, public inputs and operational commands |
+| `tests`, `.github/workflows` | Unit/integration/lifecycle checks and software/security/model workflows |
+| `deploy/aws/terraform` | AWS source; state and private variables stay out of Git |
+| `docs/verification` | Explicitly scoped, publishable reference evidence |
 
-Six configurations span logistic regression, random forest and LightGBM.
-Train-only grouped CV average precision selects a candidate, with a simplicity
-tolerance; validation selects a recall-constrained threshold. The initial training
-run evaluates only the chosen candidate on test. Retraining leaves test unevaluated.
-No test metric determines promotion. This historical dataset does not establish
-present-day or temporal lending validity.
+Data: [UCI provenance and attribution](data/README.md). License: [LICENSE](LICENSE).
+Secrets, live state and private artifacts are excluded from Git. Check each measurement's
+scope before comparing results.
+## Demonstration screenshots
 
-[Model card](docs/model_card.md) and `docs/verification/` contain actual evidence.
-Batch 1 model latency and Batch 2 HTTP latency measure different scopes. The
-included HTTP reference uses SQLite observations; the Windows verifier benchmarks
-your actual Docker API and PostgreSQL. No cloud SLA is claimed.
+Local monitoring of benchmark traffic. Repeated example inputs can trigger
+drift; missing outcome labels prevent predictive-quality assessment.
 
-## Verification and boundaries
+![Local monitoring dashboard](docs/screenshots/dashboard-local.png)
 
-```powershell
-.\.venv\Scripts\python.exe scripts\verify_batch2.py
-```
+Registered model and source-run details.
 
-This reruns verification without reinstalling or rebuilding. An optional
-`--skip-software-checks` resumes only service checks after software checks have
-already succeeded. `docker compose logs -f ml-api mlflow` helps diagnose startup.
-`docker compose down` preserves volumes; `--volumes` deletes stored data.
+![Local MLflow registry](docs/screenshots/mlflow-local.png)
 
-Published ports bind to loopback. API data/prediction routes require a key and
-mutations require admin authorization. MLflow remains a private local interface.
-MLflow stores metadata/artifacts in its Docker volume; PostgreSQL holds the
-prediction ledger and monitoring reports. CI validates software, dependencies,
-source security, secrets, container controls and image vulnerabilities. The separate
-manual workflow validates models and benchmarks serving. See [Security](SECURITY.md)
-for current boundaries. The Milestone 10 package does not authorize creating cloud resources or
-claim that a public deployment exists.
+Successful software and security CI for the commit shown.
 
-See [architecture](docs/architecture.md), [AWS deployment](docs/milestone-10-guide.md), [data pipeline](docs/data_pipeline.md),
-[responsible AI](docs/responsible_ai.md), and [Batch 2 guide](docs/batch-2-guide.md).
+![GitHub Actions CI](docs/screenshots/ci-green.png)

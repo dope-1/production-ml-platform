@@ -85,8 +85,9 @@ All model-generated numbers above come from that report. Registry audit and
 HTTP verification are included alongside it. Rollback and rejection were tested
 in isolated real MLflow registries using explicitly synthetic fixtures.
 
-No live model monitoring or retraining runs yet. A distribution change requires
-investigation; future models need common-cohort comparison and validated rollout.
+This reference evaluation predates the monitoring/retraining implementation. Later milestones
+add those capabilities and isolated verification, not live customer outcomes. Distribution
+changes require investigation and independently validated rollout.
 
 ## Serving and retraining update (0.3.0)
 
@@ -97,3 +98,13 @@ scenarios are not additional real-world validation. Individual explanations show
 feature contributions with explicit probability/log-odds units and a reconstruction
 check. See `batch-2-report.md` for measured HTTP latency and its SQLite/local-runtime
 scope, and `batch-2-guide.md` for delayed-label and retraining limitations.
+
+## Portfolio evidence
+
+[Benchmarking](benchmark-report.md) separates in-process timing from HTTP timing.
+[Monitoring](monitoring-report.md) records simulation outcomes and evidence-sufficiency rules.
+Regenerate current local evidence using `scripts/collect_portfolio_evidence.py --benchmark`;
+every new measurement keeps its own date, environment and model identity.
+The [22 September local evidence](verification/portfolio/evidence.json) has its own serving
+run identity and contains no observed labels; it does not re-verify the quality metrics above.
+[AWS deployment](milestone-10-report.md) remains incomplete after CloudFront verification was declined.

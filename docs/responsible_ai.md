@@ -27,3 +27,24 @@ Synthetic cohorts demonstrate detection and are isolated from live triggers; the
 do not establish real production performance. A separately supplied dataset with
 new features and observed labels is required for retraining. Public source records
 must not be confused with private customer data suitable for unrestricted logging.
+
+## Assessment and residual risks
+
+| Risk | Implemented evidence/control | Remaining limitation |
+|---|---|---|
+| Transfer | Historical Taiwan provenance disclosed | No prospective UAE or current-customer validation |
+| Disparate impact | Demographics excluded from inputs; support-aware subgroup diagnostics | Proxies remain; a small recall gap does not establish fairness |
+| False positives | Validation threshold and held-out confusion matrix published | Test precision 0.4611; no actual lending cost model supplied |
+| Explanations | SHAP output space and reconstruction checked | Association is not causation or individual certainty |
+| Biased outcomes | Coverage and per-class label-support gates | Observed labels may differ systematically from missing labels |
+| Model change | Artifact checks, promotion/comparison policy, audit and explicit reload | Single controller; repeated holdout use needs independent oversight |
+| Telemetry | Coarse bins; raw inputs excluded from ledger | Scores/bins remain potentially sensitive; retention is an operator action |
+| Deployment | Scans, reviewed exception policy, API/admin roles | Temporary HIGH findings; CloudFront verification declined; AWS deployment unverified |
+
+The reference validation sex-group recall gap is approximately 0.0011: one point estimate,
+not a statistical guarantee or certification. Review its support counts in
+[candidate.json](verification/candidate.json). No demographic attribute is inferred at inference.
+
+Any real decision use requires representative consented data, independent evaluation, human
+review/appeal, security/privacy review and an approved operating policy. This portfolio does
+not make consequential lending decisions.

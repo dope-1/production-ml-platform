@@ -1,66 +1,93 @@
-# Architecture through Milestone 8
+# Architecture and engineering trade-offs
+
+## Model lifecycle
 
 ```mermaid
 flowchart TD
-    Data[Versioned datasets] --> Train[Grouped CV training]
-    Train --> Registry[MLflow candidates]
-    Registry --> Gate[Validation and comparison gate]
-    Gate --> Alias[Approved production alias]
-    Gate --> Audit[Controller audit journal]
-    Alias --> Loader[Verified snapshot loader]
-    Loader --> Serve[Real-time and batch scoring]
-    Serve --> PG[(Prediction ledger)]
-    PG --> Monitor[Drift and delayed-label monitoring]
-    Monitor --> Trigger[Retraining eligibility]
-    New[New labeled data] --> Trigger
-    Trigger --> Train
+    Data["Pinned UCI data"] --> Split["Grouped train / validation / test"]
+    Split --> Train["Training-only CV and fitted pipeline"]
+    Train --> Registry["MLflow candidate and hashed evidence"]
+    Registry --> Gate["Validation and champion comparison"]
+    Gate -->|Accept| Alias["Approved production alias"]
+    Gate -->|Reject| Keep["Retain champion"]
+    Alias --> Load["Verify and load snapshot"]
+    Load --> Serve["HTTP and batch inference"]
+    Serve --> Ledger["Prediction ledger and delayed labels"]
+    Ledger --> Monitor["Cohort monitoring"]
+    Monitor --> Review["Investigate drift / degradation"]
+    New["Validated new features and actual labels"] --> Retrain["Controlled challenger training"]
+    Review --> Retrain
+    Retrain --> Registry
 ```
 
-Training runs in a host CLI/job process, never in an HTTP handler. MLflow in
-Docker uses a SQLite metadata store and proxies artifact files over HTTP. That
-small local backend is separate from the API's PostgreSQL observation store.
-Both volumes survive ordinary Compose restarts. Alembic runs before API startup.
+Training runs in a CLI/job process, never an HTTP handler. Promotion and rollback use a
+serialized controller and audit journal. A request captures one snapshot so score, explanation,
+buckets and version agree. Reload verifies the replacement before switching; failure retains
+an existing snapshot. No automatic cross-worker synchronization is implemented.
 
-The controller serializes mutations with FileLock and journals alias changes
-before applying them. The serving process mounts that directory read-only to
-respect pending operations without rebinding the controller's host tracking URI
-to Docker's internal URI. Both point to the same trusted MLflow server. Approval,
-run provenance, source schema/code hashes and every artifact file are checked
-before deserialization. The monitoring reference is separately checksummed and
-bound to the same run and dataset. Batch 1 artifacts remain compatible.
+Profile groups remain within one data partition. Retraining extends training only, preserves
+validation/test bytes and does not evaluate test. Repeated validation decisions still require
+independent governance; fixed holdouts alone do not prevent eventual selection overfitting.
 
-An immutable model/reference snapshot is loaded once. A request captures that
-snapshot, so scoring, explanation, bucketing and recorded version stay together
-if a reload occurs concurrently. Reload builds the replacement fully before
-switching the pointer and verifies that the alias did not change during loading.
-A failed reload retains the current snapshot; cold-start readiness requires both
-the prediction schema and a loaded model. Existing snapshots remain available
-during registry outages. This is explicit operator-controlled rollout, with no
-automatic cross-worker synchronization; Compose runs one Uvicorn worker.
+## Local runtime
 
-Predictions are committed before success responses. The database stores version,
-score, class, timestamp, coarse feature buckets and eventual labels. Customer IDs
-remain in user-managed batch outputs. Raw features and demographic audit columns
-are not stored in this ledger. Reused request IDs do not collide with unique
-prediction IDs. Label updates are transactional, row-locked and immutable.
+```mermaid
+flowchart TD
+    Client["Browser / API client"] --> API["FastAPI: authenticated inference and dashboard"]
+    API --> PG["PostgreSQL: predictions, labels, reports"]
+    API --> ML["Private MLflow HTTP artifact service"]
+    API --> Control["Read-only approved registry state"]
+    Jobs["Operator CLI / training jobs"] --> ML
+    Jobs --> Control
+    Jobs --> PG
+    ML --> Volume["Persistent SQLite metadata and artifacts"]
+```
 
-Monitoring isolates each model version, observation cohort and prediction-time
-window. Labels are included as of report creation; coverage and class support
-are explicit. Numerical PSI and categorical total variation have effect-size
-thresholds. Drift is separate from performance degradation. Insufficient evidence
-never triggers a drift/performance retraining job. The dashboard reports real DB
-observations, while Prometheus exposes operational counters/histograms.
+Compose publishes API 8000, MLflow 5000 and PostgreSQL 5432 on loopback. API/admin keys protect
+data/mutation routes. Authentication and request bounds precede model/database work. One
+Uvicorn worker owns the limiter and snapshot. Predictions commit before success responses.
 
-New retraining features/labels arrive through a separately validated CSV. The
-pipeline rejects overlapping IDs or holdout predictor profiles, extends only
-training, preserves validation/test bytes and does not evaluate test. The current
-champion is re-read under the promotion lock. Every challenger must pass the
-existing absolute and comparison gates; deployment requires an explicit serving
-reload. Test/demo policies and synthetic observations are isolated from the live
-registry and monitoring cohort.
+The ledger retains versions, scores, coarse feature buckets and eventual labels, not raw
+features/customer IDs. Batch output can contain supplied IDs and is user-managed. Aggregates
+still require protection/retention. Early security rejections appear in Prometheus; not all
+reach the database HTTP-event report.
 
-Secrets live in environment configuration; versioned policy contains no secrets.
-The distributed archive excludes local credentials, virtual environments,
-controller state, generated data and live model artifacts. All Docker ports bind
-to loopback. This design is a single-controller local platform; authentication,
-network ingress, scanning and cloud deployment remain the next batch.
+Prediction monitoring uses model/cohort/time isolation. HTTP events use cohort/time and may
+span versions during a rollout. Synthetic, verification and benchmark cohorts cannot supply
+live retraining evidence. Drift is an investigation signal, not proof of degradation.
+
+## AWS target deployment
+
+```mermaid
+flowchart TD
+    Viewer["Browser / API client"] -->|HTTPS| Edge["CloudFront: AWS-provided domain"]
+    Edge -->|"HTTP + secret origin header"| ALB["ALB: CloudFront-only ingress"]
+    ALB --> Task["One Fargate task: API and private MLflow"]
+    Task -->|"Verified TLS"| RDS["Private RDS PostgreSQL"]
+    Task --> EFS["Encrypted EFS: MLflow state"]
+    S3["Private versioned S3: bootstrap"] --> Task
+    ECR["ECR image pinned by digest"] --> Task
+    Secrets["Secrets Manager"] --> Task
+    Task --> Logs["CloudWatch logs and alarms"]
+```
+
+Phase 1 creates infrastructure with serving disabled. Phase 2 starts the task after the image,
+model and secrets exist. Bootstrap and migrations precede serving. Authenticated CloudFront
+responses are not cached. CloudFront-to-ALB HTTP means this is not end-to-end HTTPS. The
+CloudFront prefix list and random header protect origin ingress, subject to production review.
+
+No NAT gateway is used: the task has a public IP for outbound access and restricted inbound
+security groups. PostgreSQL stays private. Scaling beyond one task requires redesigning the
+SQLite registry, controller coordination and in-memory limiter.
+
+| Decision | Benefit | Limit / future production work |
+|---|---|---|
+| One task and worker | Simple snapshot, limiter and SQLite ownership | No serving redundancy; shared state needed for scale |
+| Explicit reload | Reviewable rollout; failures retain champion | Operator coordination after promotion/rollback |
+| Shared API/admin keys | Demonstrable authorization boundary | Per-client identity and rotation governance needed |
+| Historical grouped splits | Avoid duplicate-profile leakage | No prospective temporal or UAE external validation |
+| Separate process/HTTP benchmarks | Honest latency attribution | No capacity guarantee or cloud SLA |
+| Fail-closed security checks | Blocks unknown/unaccepted findings | Temporary HIGH exceptions remain explicit risks |
+
+See [Milestone 10 status](milestone-10-report.md) for actual provisioning evidence. Secrets,
+Terraform state, backups and raw runtime configuration are never portfolio assets.
