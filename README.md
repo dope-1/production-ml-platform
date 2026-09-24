@@ -7,9 +7,7 @@ MLflow tracking, guarded promotion and rollback, authenticated inference, monito
 controlled retraining. Built with Python, scikit-learn, LightGBM, FastAPI, PostgreSQL, Docker,
 GitHub Actions and Terraform.
 
-**Local platform implemented through Milestone 9; local portfolio evidence captured on
-22 September 2026. AWS was partially provisioned; CloudFront account verification was
-declined and Milestone 10 remains incomplete.** This historical-data demonstration is not approved for
+**Completed local ML engineering portfolio: training, registry, inference, monitoring, evidence and passing CI. AWS deployment was discontinued; the partial Terraform stack and its EFS backups were removed on 24 September 2026. No live cloud deployment is claimed.** This historical-data demonstration is not approved for
 lending decisions or present-day UAE customer prediction. See the
 [deployment status](docs/milestone-10-report.md) and [portfolio checklist](docs/milestone-11-report.md).
 
@@ -110,8 +108,8 @@ The target public path is CloudFront HTTPS on an AWS-provided domain, then an AL
 to CloudFront origin addresses and a secret origin header, then one ECS/Fargate task.
 CloudFront-to-ALB uses HTTP. RDS PostgreSQL uses verified TLS; encrypted EFS holds MLflow
 SQLite metadata/artifacts. ECR, private S3, Secrets Manager and CloudWatch support deployment.
-This design uses the AWS-provided domain, but is blocked on this account by the declined
-CloudFront verification. No alternative public deployment has been implemented or verified.
+This retained design was not deployed successfully. CloudFront verification was declined;
+the cloud deployment was discontinued and the partial infrastructure removed.
 
 One task matches the SQLite registry and in-memory limiter; this is not a highly available
 serving fleet. A partial apply is not a working deployment. The actual HTTPS verifier must pass

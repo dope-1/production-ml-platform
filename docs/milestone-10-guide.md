@@ -1,5 +1,7 @@
 # Milestone 10: AWS deployment guide
 
+> Archived deployment reference: AWS deployment was discontinued and the partial stack removed on 24 September 2026. The completed portfolio runs locally. These commands can recreate billable infrastructure.
+
 This is the reference cloud deployment for model version 1. It is designed for a low-traffic
 portfolio environment, not a multi-region or horizontally scaled production service. Terraform
 creates billable resources, so read the cost and teardown sections before applying it.
